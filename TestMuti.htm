@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script type="text/javascript" src="Webresources/javascript/framework/jquery-1.9.1.js"></script>
+    <script type="text/javascript" src="Webresources/javascript/infosky/infosky.js"></script>
+    <script type="text/javascript" src="Webresources/javascript/framework/jquery.color.js"></script>
+    <script type="text/javascript" src="Webresources/javascript/data/airport.js"></script>
+    <style type="text/css">
+        body { font-size: 12px; }
+        input { border: 1px solid #aaa; }
+        .tag-container { width: 250px; height: auto; border: 1px solid #ccc; margin: 50px auto 0; cursor: text; }
+        .tag-container input { width: 100px; border: none; line-height: 18px; height: 18px; margin: 5px; }
+        .tag-container input:focus { outline: none; }
+        .tag-container .tag-span { display: inline-block; margin: 5px; padding: 0px 25px 0px 10px; background-color: #E0EAF1; border-bottom: 1px solid #B3CEE1; border-right: 1px solid #B3CEE1; color: #3E6D8E; position: relative; height: 18px; line-height: 18px; cursor: pointer; }
+        .tag-container .tag-delete { background-color: #CCCCCC; border: 1px solid #AAAAAA; border-radius: 10px 10px 10px 10px; color: #FFFFFF; cursor: pointer; height: 12px; line-height: 11px; position: absolute; right: 2px; text-indent: 4px; top: 3px; vertical-align: middle; width: 12px; }
+        .tag-container .tag-delete:hover { background-color: #d04242; }
+    </style>
+</head>
+<body>
+    <textarea id="consoleArea">测试</textarea>
+    <p>
+        <a onclick='eval($("#consoleArea").val())'>测试</a>
+    </p>
+    <div class="tag-container">
+        <input type="text" id="tagInput" value="hello world this is a a test!" />
+    </div>
+    <div class="filter-container" style="margin: 50px auto; text-align: center;">
+        <input id="filterInput" type="text" />
+    </div>
+    <div id="consoleDiv" style="margin: 50px auto; text-align: center;"></div>
+</body>
+</html>
+<script type="text/javascript">
+    (function() {
+        _$.tag.init($("#tagInput"));
+    })();
+
+    (function() {
+        _$.auto.init($("input"),airport);
+    })();
+</script>

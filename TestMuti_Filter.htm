@@ -1,0 +1,93 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <script type="text/javascript" src="Webresources/javascript/framework/jquery-1.9.1.js"></script>
+    <script type="text/javascript" src="Webresources/javascript/infosky/infosky.js"></script>
+    <script type="text/javascript" src="Webresources/javascript/framework/jquery.color.js"></script>
+    <script type="text/javascript" src="Webresources/javascript/data/airport.js"></script>
+    <link rel="stylesheet" type="text/css" href="Webresources/css/infosky.css" />
+    <!--[if lt IE 7]>
+<script type="text/javascript">_$.auto.setup({"sortEnable":false});</script>
+<style>body { behavior: url("Webresources/javascript/frameworl/csshover3.htc"); }</style>
+    <![endif]-->
+</head>
+<body>
+    <div class="tag-container" style="margin: 50px;">
+        <input type="text" id="tagInput" />
+    </div>
+    <div class="filter-container" style="margin: 50px;">
+        <input id="filterInput" type="text" />
+    </div>
+    <div class="filter-container" style="margin: 50px;">
+        <input id="select1" type="text"/>
+        <select id="forselect1" style="display:none;">
+            <optgroup label="国内">
+                <option value="SHA">上海虹桥</option>
+                <option value="PEK">北京</option>
+                <option value="CTU">成都</option>
+                <option value="PVG">上海浦东</option>                
+                <option value="SHA">上海虹桥</option>
+                <option value="PEK">北京</option>
+                <option value="CTU">成都</option>
+                <option value="PVG">上海浦东</option>                
+                <option value="SHA">上海虹桥</option>
+                <option value="PEK">北京</option>
+                <option value="CTU">成都</option>
+                <option value="PVG">上海浦东</option>                
+                <option value="SHA">上海虹桥</option>
+                <option value="PEK">北京</option>
+                <option value="CTU">成都</option>
+                <option value="PVG">上海浦东</option>
+            </optgroup>
+            <optgroup label="国外">
+                <option value="LAX">洛杉矶</option>
+                <option value="SXF">柏林</option>
+                <option value="FUK">福冈</option>
+                <option value="HND">羽田</option>
+                <option value="LAX">洛杉矶</option>
+                <option value="SXF">柏林</option>
+                <option value="FUK">福冈</option>
+                <option value="HND">羽田</option>
+                <option value="LAX">洛杉矶</option>
+                <option value="SXF">柏林</option>
+                <option value="FUK">福冈</option>
+                <option value="HND">羽田</option>
+                <option value="LAX">洛杉矶</option>
+                <option value="SXF">柏林</option>
+                <option value="FUK">福冈</option>
+                <option value="HND">羽田</option>
+                <option value="LAX">洛杉矶</option>
+                <option value="SXF">柏林</option>
+                <option value="FUK">福冈</option>
+                <option value="HND">羽田</option>
+            </optgroup>
+        </select>
+    </div>
+    <textarea id="consoleArea"></textarea>
+    <p>
+        <a onclick='eval($("#consoleArea").val())'>控制台</a>
+    </p>
+    <div id="consoleDiv" style="margin: 50px auto; text-align: center;">
+    </div>
+</body>
+</html>
+<script type="text/javascript">
+    (function () {
+        //自动完成初始化
+        _$.auto.init($("#filterInput"), airport, {
+            sort: 2
+        });
+
+        //自动完成 + tag 初始化
+        _$.auto.init($("#tagInput"), airport, {
+            sort: 4,
+            callback: function (data) {
+                _$.tag.setValue($("#tagInput"));
+            }
+        });        
+        _$.tag.init($("#tagInput"));
+        
+        //多选初始化
+        _$.select.init($("#select1"),$("#forselect1"),{"muti":true});
+    })();
+</script>

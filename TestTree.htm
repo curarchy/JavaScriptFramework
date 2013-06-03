@@ -1,0 +1,28 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <script type="text/javascript" src="Webresources/javascript/framework/jquery-1.9.1.js"></script>
+    <script type="text/javascript" src="Webresources/javascript/infosky/infosky.js"></script>
+    <script type="text/javascript" src="Webresources/javascript/framework/jquery.color.js"></script>
+    <script type="text/javascript" src="Webresources/javascript/data/treejson.js"></script>
+    <link rel="stylesheet" type="text/css" href="Webresources/css/infosky.css" />
+    <style type="text/css">
+	.treeArea{
+		width:300px;
+		height:800px;
+		border:1px solid #ccc;
+		padding:10px;
+		background-color: #ffffcc;
+		overflow-y: scroll;
+	}
+    </style>
+</head>
+<body>
+   <div class="treeArea"></div>
+</body>
+</html>
+<script type="text/javascript">
+    (function () {
+        _$.tree.init(treeJson,{container:$(".treeArea")});
+    })();
+</script>
