@@ -35,7 +35,8 @@
 			}, {
 				id: 13,
 				title: "吉林",
-				key: "jilin"
+				key: "jilin",
+				checked: true
 			}
 		]
 	}, {
@@ -75,7 +76,8 @@
 							}, {
 								id: 2103,
 								title: "金桥",
-								key: "jinqiao"
+								key: "jinqiao",
+								checked: true
 							}
 						]
 					}

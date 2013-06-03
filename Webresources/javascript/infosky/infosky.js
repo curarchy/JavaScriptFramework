@@ -1837,16 +1837,18 @@
     };
 
     var _nodeTemp = "<li class='{0}'></li>",
-        _nodeIcon = "<span class='nodeIcon {0}'>&nbsp;</span>",
+        _nodeIcon = "<div class='nodeIcon {0}'></div>",
         _containerTemp = "<ul></ul>",
         _nodeContent = "<a class='nodeTitle'>{0}</a>",
         _option = {
             container: null,
-            checkbox: true
+            checkbox: true,
+            open: false
         };
 
     var _init = function(option, data) {
         var tree = _buildTree(option, data, null, 0);
+        tree.data("tree.option", option);
         _bindEvent(tree);
         if (option.checkbox) {
             _bindCheckEvent(tree);
@@ -1910,6 +1912,8 @@
 
     var _buildTree = function(option, nodes, parent, layer, emptyLine) {
         var tree = $(_containerTemp);
+        if (!option.open && layer >= 1)
+            tree.hide();
         emptyLine = emptyLine || [];
         if (parent) {
             parent.append(tree.addClass("subTree"));
@@ -1919,6 +1923,9 @@
         for (var i = 0; i < nodes.length; i++) {
             _buildTreeNode(option, nodes[i], tree, layer, i === nodes.length - 1, i === 0, emptyLine);
         }
+        tree.find(".checkOne").each(function(index, item) {
+            _processParentCheck($(item));
+        });
         return tree;
     };
 
@@ -1927,6 +1934,7 @@
         var nodeItem = $(_$.stringFormat(_nodeTemp, "treeNode"));
         var hasChild = node.children && node.children.length;
         var nodeIcon = "";
+        node.layer = layer;
         for (var i = 0; i < layer; i++) {
             if ($.inArray(i + 1, emptyLine) !== -1) {
                 nodeIcon = _buildTreeNodePrefix("nobg");
@@ -1937,9 +1945,9 @@
         }
 
         if (hasChild) {
-            nodeIcon = _buildTreeNodePrefix("folderClose", lastNode, firstNode);
+            nodeIcon = _buildTreeNodePrefix(option.open ? "folderClose" : "folderOpen", lastNode, firstNode);
             nodeItem.append(nodeIcon);
-            nodeIcon = _buildTreeNodePrefix("folderItemClose", lastNode);
+            nodeIcon = _buildTreeNodePrefix(option.open ? "folderItemClose" : "folderItemOpen", lastNode);
         } else {
             nodeIcon = _buildTreeNodePrefix("leaf", lastNode);
             nodeItem.append(nodeIcon);
@@ -1949,11 +1957,17 @@
         nodeItem.append(nodeIcon);
 
         if (option.checkbox) {
-            nodeIcon = _buildTreeNodePrefix("checkNone");
+            if (hasChild) {
+                nodeIcon = _buildTreeNodePrefix("checkNone");
+            } else {
+                nodeIcon = _buildTreeNodePrefix(node.checked ? "checkOne" : "checkNone");
+            }
             nodeItem.append(nodeIcon);
         }
 
         nodeItem.append($(_$.stringFormat(_nodeContent, node.title)));
+        nodeItem.data("tree.data", node);
+
         parent.append(nodeItem);
 
         if (hasChild) {
@@ -1973,10 +1987,52 @@
         return result;
     };
 
+    var _getValueForMuti = function(option, tree, ids) {
+        var result = [];
+        $(tree).find(".checkOne").each(function(index, item) {
+            var target = $(item);
+            if (target.prev().is(".leafItem")) {
+                var data = target.closest("li").data("tree.data");
+                result.push(ids ? data.id : data);
+            }
+        });
+        return result;
+    };
+
+    var _getTree = function(tree, list) {
+        list = list || [];
+        $(tree).find(">.treeNode").each(function(index, item) {
+            var data = $(item).data("tree.data");
+            data.children = [];
+            data.checked = $(item).find(".checkOne").length > 0;
+            var subTree = $(item).find(".subTree");
+
+            list.push(data);
+            if (subTree.length) {
+                data.children = data.children || [];
+                subTree.each(function(subIndex, subItem) {
+                    _getTree($(subItem), data.children);
+                });
+            }
+        });
+        return list;
+    };
+
     $.extend(_$.tree, {
         init: function(data, option) {
             option = $.extend({}, _option, option);
             _init(option, data);
+        },
+        getValue: function(container, ids) {
+            var tree = $(container).find(".rootTree");
+            var opt = tree.data("tree.option");
+            if (opt.checkbox) {
+                return _getValueForMuti(opt, tree, ids);
+            }
+        },
+        getTree: function(container) {
+            var tree = $(container).find(".rootTree");
+            return _getTree(tree);
         }
     });
 })();
