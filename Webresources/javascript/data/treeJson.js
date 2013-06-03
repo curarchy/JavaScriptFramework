@@ -54,7 +54,17 @@
 						children: [{
 								id: 2110,
 								title: "黄浦",
-								key: "huangpu"
+								key: "huangpu",
+								children: [{
+										id: 21100,
+										title: "新天地",
+										key: "xintiandi"
+									}, {
+										id: 21101,
+										title: "人民广场",
+										key: "renminguangchang"
+									}
+								]
 							}, {
 								id: 2111,
 								title: "徐汇",
@@ -68,7 +78,12 @@
 						children: [{
 								id: 2101,
 								title: "三林",
-								key: "sanlin"
+								key: "sanlin",
+								children:[{
+									id:21010,
+									title:"永泰",
+									key:"yongtai"
+								}]
 							}, {
 								id: 2102,
 								title: "北蔡",
@@ -77,7 +92,12 @@
 								id: 2103,
 								title: "金桥",
 								key: "jinqiao",
-								checked: true
+								checked: true,
+								children:[{
+									id:21031,
+									title:"temp",
+									key:"temp"
+								}]
 							}
 						]
 					}

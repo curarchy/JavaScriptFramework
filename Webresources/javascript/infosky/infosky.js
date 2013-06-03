@@ -1843,7 +1843,7 @@
         _option = {
             container: null,
             checkbox: true,
-            open: false
+            open: true
         };
 
     var _init = function(option, data) {
@@ -2021,6 +2021,11 @@
     $.extend(_$.tree, {
         init: function(data, option) {
             option = $.extend({}, _option, option);
+            if (data instanceof Array) {
+                data = $.extend(true, [], data);
+            } else {
+                data = $.extend(true, {}, data);
+            }
             _init(option, data);
         },
         getValue: function(container, ids) {
