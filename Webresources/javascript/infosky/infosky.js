@@ -2005,7 +2005,7 @@
             var data = $(item).data("tree.data");
             data.children = [];
             data.checked = $(item).find(".checkOne").length > 0;
-            var subTree = $(item).find(".subTree");
+            var subTree = $(item).find(">.subTree");
 
             list.push(data);
             if (subTree.length) {
@@ -2021,12 +2021,13 @@
     $.extend(_$.tree, {
         init: function(data, option) {
             option = $.extend({}, _option, option);
+            var _data = null;
             if (data instanceof Array) {
-                data = $.extend(true, [], data);
+                _data = $.extend(true, [], data);
             } else {
-                data = $.extend(true, {}, data);
+                _data = $.extend(true, {}, data);
             }
-            _init(option, data);
+            _init(option, _data);
         },
         getValue: function(container, ids) {
             var tree = $(container).find(".rootTree");
