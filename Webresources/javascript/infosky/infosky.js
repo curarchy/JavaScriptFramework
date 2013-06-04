@@ -1869,6 +1869,66 @@
         $(tree).on("click.tree", ".nodeTitle", function() {
             $(this).prev().trigger("click.tree");
         });
+
+        _$.menu.init($(tree), ".treeNode", {
+            menuData: [{
+                    title: "delete",
+                    onclick: function(liItem, target) {
+                        if ($(target).is(".treeNode")) {
+                            $(target).remove();
+                        } else {
+                            $(target).closest(".treeNode").remove();
+                        }
+                        _repaintTree($(tree));
+                    }
+                }, {
+                    title: "add",
+                    onclick: function(liItem, target) {
+                        console.dir(2);
+                    }
+                }
+            ],
+            onMenu: function(target) {
+                if ($(target).is(".treeNode"))
+                    $(target).addClass("keyFocus");
+                else
+                    $(target).closest(".treeNode").addClass("keyFocus");
+                _repaintTree($(tree), 0);
+            },
+            onMenuOff: function() {
+                $(tree).find(".keyFocus").removeClass("keyFocus");
+            }
+        });
+    };
+
+    var _repaintTree = function(tree, layer, emptyLine) {
+        var subLis = $(tree).find(">.treeNode");
+        layer = layer || 0;
+        emptyLine = emptyLine || [];
+        subLis.each(function(index, item) {
+            var divs = $(item).find(">.nodeIcon");
+            divs.removeClass("first last");
+            for (var i = 0; i < layer; i++) {
+                if ($.inArray(i + 1, emptyLine) !== -1) {
+                    $(divs[i]).removeClass("line").addClass("nobg");
+                } else {
+                    $(divs[i]).removeClass("nobg").addClass("line");
+                }
+            }
+
+            if (index === 0) {
+                divs.addClass("first");
+                if (layer > 0) {
+                    divs.filter(".folderClose").removeClass("first");
+                }
+            }
+            if (index === subLis.length - 1) {
+                divs.addClass("last");
+                if ($(item).find(".treeNode").length)
+                    emptyLine.push(layer + 1);
+            }
+            _repaintTree($(item).find(">.subTree"), layer + 1, emptyLine);
+        });
     };
 
     var _bindCheckEvent = function(tree) {
@@ -1945,7 +2005,7 @@
         }
 
         if (hasChild) {
-            nodeIcon = _buildTreeNodePrefix(option.open ? "folderClose" : "folderOpen", lastNode, firstNode);
+            nodeIcon = _buildTreeNodePrefix(option.open ? "folderClose" : "folderOpen", lastNode, layer > 0 ? false : firstNode);
             nodeItem.append(nodeIcon);
             nodeIcon = _buildTreeNodePrefix(option.open ? "folderItemClose" : "folderItemOpen", lastNode);
         } else {
@@ -2039,6 +2099,70 @@
         getTree: function(container) {
             var tree = $(container).find(".rootTree");
             return _getTree(tree);
+        }
+    });
+})();
+
+/*************************************************************
+ * infosky.menu
+ *------------------------------------------------------------
+ * Copyright InfoSky Corporation. All rights reserved.
+ * Author: Chenhy(chenhy@infosky.com.cn)
+ * Create Date: 2013-06-04
+ ************************************************************/
+
+(function() {
+    _$ = _$ || {};
+    _$.menu = function(item) {
+        this.item = item;
+    };
+
+    var _menuArea = "<div class='tptDiv'><ul class='menuContainer'></ul></div>",
+        _menuItem = "<li><span>{0}</span></li>",
+        _option = {
+            menuData: []
+        };
+
+    var _init = function(area, target, option) {
+        var menu = $(_menuArea).hide();
+        $.each(option.menuData, function(index, data) {
+            var liItem = $(_$.stringFormat(_menuItem, data.title));
+            liItem.on("click.menu", function(e) {
+                if (data.onclick) {
+                    data.onclick($(this), menu.data("menu.target"));
+                }
+                menu.hide();
+            });
+            menu.find("ul").append(liItem);
+        });
+
+        $("body").append(menu);
+
+        area.on("contextmenu", target, function(e) {
+            menu.css({
+                "top": e.clientY + "px",
+                "left": e.clientX + "px",
+                "position": "absolute",
+                "z-index": 200002
+            }).data("menu.target", e.target).show();
+            if (option.onMenu) {
+                option.onMenu(e.target);
+            }
+            return false;
+        });
+
+        $(document).on("click.menu", function() {
+            menu.hide();
+            if (option.onMenuOff) {
+                option.onMenuOff();
+            }
+        });
+    };
+
+    $.extend(_$.menu, {
+        init: function(area, target, option) {
+            option = $.extend({}, _option, option);
+            _init(area, target, option);
         }
     });
 })();
