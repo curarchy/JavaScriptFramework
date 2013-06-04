@@ -1893,7 +1893,6 @@
                     $(target).addClass("keyFocus");
                 else
                     $(target).closest(".treeNode").addClass("keyFocus");
-                _repaintTree($(tree), 0);
             },
             onMenuOff: function() {
                 $(tree).find(".keyFocus").removeClass("keyFocus");
