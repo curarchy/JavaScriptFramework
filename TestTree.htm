@@ -24,7 +24,13 @@
 </body>
 </html>
 <script type="text/javascript">
-    (function () {
-        _$.tree.init(treeJson,{container:$(".treeArea")});
+    (function() {
+        _$.tree.init(treeJson, {
+            container: $(".treeArea"),
+            onDelete: function(data) {},
+            onSelect: function(data) {
+                console.info(data);
+            }
+        });
     })();
 </script>

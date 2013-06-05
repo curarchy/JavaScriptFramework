@@ -61,7 +61,8 @@ body .tptDiv ul .spliHold{background: #e0ffe0;border: 1px solid #68FF66;cursor: 
 
 /*tree*/
 .nodeIcon {display: inline-block;_display:inline;_zoom:1;height:18px;width: 18px;vertical-align: middle; background: url(../img/d.gif) no-repeat -90px 0;cursor: default;}
-.folderOpen{background-position: -54px 0;cursor: pointer;}
+.last.folderOpen{background-position: -54px 0;cursor: pointer;}
+.folderOpen{background-position: -36px -72px;cursor: pointer;}
 .folderClose{background-position: -72px 0;cursor: pointer;}
 .line{background-position: -90px 0;}
 .last.leaf{background-position: -36px 0;}

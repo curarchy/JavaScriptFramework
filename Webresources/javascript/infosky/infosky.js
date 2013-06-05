@@ -1843,20 +1843,29 @@
         _option = {
             container: null,
             checkbox: true,
-            open: true
+            open: true,
+            contextMenu: true,
+            onDelete: null,
+            onSelect: null
         };
 
     var _init = function(option, data) {
         var tree = _buildTree(option, data, null, 0);
         tree.data("tree.option", option);
-        _bindEvent(tree);
+        _bindEvent(option, tree);
         if (option.checkbox) {
             _bindCheckEvent(tree);
+        }
+        if (option.onSelect) {
+            _bindClickEvent(option, tree);
+        }
+        if (option.contextMenu) {
+            _bindContextMenu(option, tree);
         }
         option.container.append(tree);
     };
 
-    var _bindEvent = function(tree) {
+    var _bindEvent = function(option, tree) {
         $(tree).on("click.tree", ".folderClose,.folderOpen", function() {
             if ($(this).is(".folderClose")) {
                 $(this).removeClass("folderClose").addClass("folderOpen").next().removeClass("folderItemClose")
@@ -1869,26 +1878,30 @@
         $(tree).on("click.tree", ".nodeTitle", function() {
             $(this).prev().trigger("click.tree");
         });
+    };
 
+    var _bindContextMenu = function(option, tree) {
         _$.menu.init($(tree), ".treeNode", {
             menuData: [{
                     title: "delete",
                     onclick: function(liItem, target) {
+                        var treeNode = null;
                         if ($(target).is(".treeNode")) {
-                            $(target).remove();
+                            treeNode = $(target);
                         } else {
-                            $(target).closest(".treeNode").remove();
+                            treeNode = $(target).closest(".treeNode");
                         }
+                        treeNode = treeNode.detach();
                         _repaintTree($(tree));
-                    }
-                }, {
-                    title: "add",
-                    onclick: function(liItem, target) {
-                        console.dir(2);
+                        _recheckTree(option, tree);
+                        if (typeof option.onDelete === "function") {
+                            option.onDelete(treeNode);
+                        }
                     }
                 }
             ],
             onMenu: function(target) {
+                $(tree).find(".keyFocus").removeClass("keyFocus");
                 if ($(target).is(".treeNode"))
                     $(target).addClass("keyFocus");
                 else
@@ -1900,10 +1913,13 @@
         });
     };
 
-    var _repaintTree = function(tree, layer, emptyLine) {
+    var _repaintTree = function(tree, layer, emptyLine, option) {
         var subLis = $(tree).find(">.treeNode");
         layer = layer || 0;
         emptyLine = emptyLine || [];
+        emptyLine = $.grep(emptyLine, function(n, i) {
+            return n < layer + 1;
+        });
         subLis.each(function(index, item) {
             var divs = $(item).find(">.nodeIcon");
             divs.removeClass("first last");
@@ -1930,6 +1946,27 @@
         });
     };
 
+    var _recheckTree = function(option, tree) {
+        $(tree).find(">.treeNode").each(function(index, item) {
+            var liItem = $(item);
+            node = liItem.find(">.checkOne,>.checkHalf,>.checkNone");
+            var checked = liItem.find(".nodeIcon.checkOne:not(:has(div))").length;
+            var unchecked = liItem.find(".nodeIcon.checkNone:not(:has(div))").length;
+            if (checked === 0 && unchecked === 0)
+                return;
+            else {
+                node.removeClass("checkNone checkOne checkHalf");
+                if (checked === 0 && unchecked > 0)
+                    node.addClass("checkNone");
+                else if (checked > 0 && unchecked === 0)
+                    node.addClass("checkOne");
+                else
+                    node.addClass("checkHalf");
+            }
+            _recheckTree(option, liItem.find(">.subTree"));
+        });
+    };
+
     var _bindCheckEvent = function(tree) {
         $(tree).on("click.tree", ".checkNone,.checkOne,.checkHalf", function() {
             if ($(this).is(".checkNone,.checkHalf")) {
@@ -1939,6 +1976,13 @@
             }
             _processSubCheck($(this));
             _processParentCheck($(this));
+        });
+    };
+
+    var _bindClickEvent = function(option, tree) {
+        $(tree).on("click.tree", ".nodeTitle,.leafItem", function() {
+            var data = $(this).closest(".treeNode").data("tree.data");
+            option.onSelect(data);
         });
     };
 
@@ -1979,6 +2023,9 @@
         } else {
             tree.addClass("rootTree");
         }
+        emptyLine = $.grep(emptyLine, function(n, i) {
+            return n < layer + 1;
+        });
         for (var i = 0; i < nodes.length; i++) {
             _buildTreeNode(option, nodes[i], tree, layer, i === nodes.length - 1, i === 0, emptyLine);
         }
@@ -2139,8 +2186,8 @@
 
         area.on("contextmenu", target, function(e) {
             menu.css({
-                "top": e.clientY + "px",
-                "left": e.clientX + "px",
+                "top": e.clientY + $(window).scrollTop() + "px",
+                "left": e.clientX + $(window).scrollLeft() + "px",
                 "position": "absolute",
                 "z-index": 200002
             }).data("menu.target", e.target).show();
