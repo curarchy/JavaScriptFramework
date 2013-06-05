@@ -51,6 +51,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="test.htm" />
     <Content Include="TestMuti_Filter.htm" />
     <Content Include="TestTree.htm" />
     <Content Include="TestVali.htm" />
@@ -58,9 +59,7 @@
     <Content Include="Webresources\img\d.gif" />
     <Content Include="Webresources\img\d.png" />
     <Content Include="Webresources\javascript\data\airport.js" />
-    <Content Include="Webresources\javascript\data\treeArray.js" />
     <Content Include="Webresources\javascript\data\treeJson.js" />
-    <Content Include="Webresources\javascript\data\treeXML.xml" />
     <Content Include="Webresources\javascript\framework\csshover3-source.htc" />
     <Content Include="Webresources\javascript\framework\csshover3.htc" />
     <Content Include="Webresources\javascript\framework\jquery-1.9.1.js" />
