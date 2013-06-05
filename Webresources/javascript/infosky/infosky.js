@@ -2150,6 +2150,155 @@
 })();
 
 /*************************************************************
+ * infosky.tree     rewirte
+ *------------------------------------------------------------
+ * Copyright InfoSky Corporation. All rights reserved.
+ * Author: Chenhy(chenhy@infosky.com.cn)
+ * Create Date: 2013-06-05
+ ************************************************************/
+(function() {
+    _$ = _$ || {};
+    _$.newTree = function(item) {
+        this.item = item;
+    };
+
+    var _nodeTemp = "<li class='{0}'></li>",
+        _nodeIcon = "<div class='nodeIcon {0}'></div>",
+        _containerTemp = "<ul></ul>",
+        _nodeContent = "<a class='nodeTitle'>{0}</a>",
+        _option = {
+            container: null,
+            checkbox: true,
+            open: true,
+            contextMenu: true,
+            onDelete: null,
+            onSelect: null
+        };
+
+    var _init = function(option, data) {
+        var tree = _buildTree(option, data, null, 0);
+        tree.data("tree.option", option);
+        // _bindEvent(option, tree);
+        // if (option.checkbox) {
+        //     _bindCheckEvent(tree);
+        // }
+        // if (option.onSelect) {
+        //     _bindClickEvent(option, tree);
+        // }
+        // if (option.contextMenu) {
+        //     _bindContextMenu(option, tree);
+        // }
+        option.container.append(tree);
+    };
+
+    var _buildTree = function(option, nodes, parent, layer, lastUl) {
+        var tree = $(_containerTemp);
+        if (!option.open && layer >= 1)
+            tree.hide();
+        if (parent) {
+            parent.append(tree.addClass("subTree"));
+        } else {
+            tree.addClass("rootTree");
+        }
+        if (lastUl) {
+            tree.addClass("lastNode");
+        }
+
+        for (var i = 0; i < nodes.length; i++) {
+            _buildTreeNode(option, nodes[i], tree, layer, i === nodes.length - 1, i === 0);
+        }
+        tree.find(".checkOne").each(function(index, item) {
+            _processParentCheck($(item));
+        });
+        return tree;
+    };
+
+    var _buildTreeNode = function(option, node, parent, layer, lastNode, firstNode) {
+        var nodeItem = $(_$.stringFormat(_nodeTemp, "treeNode"));
+        var hasChild = node.children && node.children.length;
+        if (hasChild) {
+            nodeIcon = _buildTreeNodePrefix(option.open ? "folderClose" : "folderOpen", lastNode, layer > 0 ? false : firstNode);
+            nodeItem.append(nodeIcon);
+            nodeIcon = _buildTreeNodePrefix(option.open ? "folderItemClose" : "folderItemOpen", lastNode);
+        } else {
+            nodeIcon = _buildTreeNodePrefix("leaf", lastNode);
+            nodeItem.append(nodeIcon);
+            nodeIcon = _buildTreeNodePrefix("leafItem", lastNode);
+        }
+
+        nodeItem.append(nodeIcon);
+
+        if (option.checkbox) {
+            if (hasChild) {
+                nodeIcon = _buildTreeNodePrefix("checkNone");
+            } else {
+                nodeIcon = _buildTreeNodePrefix(node.checked ? "checkOne" : "checkNone");
+            }
+            nodeItem.append(nodeIcon);
+        }
+
+        nodeItem.append($(_$.stringFormat(_nodeContent, node.title)));
+        nodeItem.data("tree.data", node);
+
+        parent.append(nodeItem);
+
+        if (hasChild) {
+            _buildTree(option, node.children, nodeItem, layer + 1, lastNode);
+        }
+    };
+
+    var _buildTreeNodePrefix = function(type, lastNode, firstNode) {
+        result = $(_$.stringFormat(_nodeIcon, type));
+        if (firstNode)
+            result.addClass("first");
+        if (lastNode)
+            result.addClass("last");
+        return result;
+    };
+
+    var _processParentCheck = function(node) {
+        var parentNode = node.closest(".subTree").siblings(".checkOne,.checkNone,.checkHalf");
+        if (parentNode.length) {
+            parentNode.removeClass("checkOne checkNone checkHalf");
+            var checkOne = parentNode.siblings("ul").find(".checkOne").length;
+            var checkNone = parentNode.siblings("ul").find(".checkNone").length;
+            if (checkOne === 0) {
+                parentNode.addClass("checkNone");
+            } else if (checkNone === 0) {
+                parentNode.addClass("checkOne");
+            } else {
+                parentNode.addClass("checkHalf");
+            }
+            _processParentCheck(parentNode);
+        }
+    };
+
+    $.extend(_$.newTree, {
+        init: function(data, option) {
+            option = $.extend({}, _option, option);
+            var _data = null;
+            if (data instanceof Array) {
+                _data = $.extend(true, [], data);
+            } else {
+                _data = $.extend(true, {}, data);
+            }
+            _init(option, _data);
+        },
+        getValue: function(container, ids) {
+            var tree = $(container).find(".rootTree");
+            var opt = tree.data("tree.option");
+            if (opt.checkbox) {
+                return _getValueForMuti(opt, tree, ids);
+            }
+        },
+        getTree: function(container) {
+            var tree = $(container).find(".rootTree");
+            return _getTree(tree);
+        }
+    });
+})();
+
+/*************************************************************
  * infosky.menu
  *------------------------------------------------------------
  * Copyright InfoSky Corporation. All rights reserved.
@@ -2206,6 +2355,30 @@
     };
 
     $.extend(_$.menu, {
+        init: function(area, target, option) {
+            option = $.extend({}, _option, option);
+            _init(area, target, option);
+        }
+    });
+})();
+
+/*************************************************************
+ * infosky.tip
+ *------------------------------------------------------------
+ * Copyright InfoSky Corporation. All rights reserved.
+ * Author: Chenhy(chenhy@infosky.com.cn)
+ * Create Date: 2013-06-05
+ ************************************************************/
+
+(function() {
+    _$ = _$ || {};
+    _$.tip = function(item) {
+        this.item = item;
+    };
+
+    var _option = {};
+
+    $.extend(_$.tip, {
         init: function(area, target, option) {
             option = $.extend({}, _option, option);
             _init(area, target, option);
