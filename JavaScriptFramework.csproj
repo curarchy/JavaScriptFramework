@@ -60,6 +60,7 @@
     <Content Include="Webresources\img\d.gif" />
     <Content Include="Webresources\img\d.png" />
     <Content Include="Webresources\javascript\data\airport.js" />
+    <Content Include="Webresources\javascript\data\treeData.js" />
     <Content Include="Webresources\javascript\data\treeJson.js" />
     <Content Include="Webresources\javascript\framework\csshover3-source.htc" />
     <Content Include="Webresources\javascript\framework\csshover3.htc" />

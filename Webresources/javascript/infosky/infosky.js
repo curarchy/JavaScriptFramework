@@ -100,13 +100,18 @@
         // _$.stringFormat("{0} xxx {1}",["a","b"]) =>> "a xxx b"
         // _$.stringFormat("{{0}} xxx {{1}}",{"0":"hello","1":"world"}) =>> "hello xxx world"
         stringFormat: function(source, params) {
-            if (arguments.length == 1) return function() {
+            if (arguments.length === 1) return function() {
                     var args = $.makeArray(arguments);
                     args.unshift(source);
                     return infosky.stringFormat.apply(this, args);
             };
-            if (arguments.length == 2 && typeof(arguments[1]) == "object" && arguments[1].constructor != Array) {
-                var obj = arguments[1];
+            if (arguments.length === 2 && typeof(arguments[1]) == "object" && (arguments[1] === null || arguments[1].constructor != Array)) {
+                var obj;
+                if (arguments[1] === null)
+                    obj = [""];
+                else if (arguments[1].constructor != Array)
+                    obj = arguments[1];
+
                 var beginchar = "{{";
                 var endchar = "}}";
                 return source.replace(new RegExp(beginchar + "([^\\[\\]]*?)" + endchar, "igm"), function($, $1) {
@@ -1823,20 +1828,19 @@
 })();
 
 /*************************************************************
- * infosky.tree
+ * infosky.tree     rewrite
  *------------------------------------------------------------
  * Copyright InfoSky Corporation. All rights reserved.
  * Author: Chenhy(chenhy@infosky.com.cn)
- * Create Date: 2013-05-30
+ * Create Date: 2013-06-05
  ************************************************************/
-
 (function() {
     _$ = _$ || {};
     _$.tree = function(item) {
         this.item = item;
     };
 
-    var _nodeTemp = "<li class='{0}'></li>",
+    var _nodeTemp = "<li class='treeNode'></li>",
         _nodeIcon = "<div class='nodeIcon {0}'></div>",
         _containerTemp = "<ul></ul>",
         _nodeContent = "<a class='nodeTitle'>{0}</a>",
@@ -1865,344 +1869,17 @@
         option.container.append(tree);
     };
 
-    var _bindEvent = function(option, tree) {
-        $(tree).on("click.tree", ".folderClose,.folderOpen", function() {
-            if ($(this).is(".folderClose")) {
-                $(this).removeClass("folderClose").addClass("folderOpen").next().removeClass("folderItemClose")
-                    .addClass("folderItemOpen").siblings("ul").hide();
-            } else {
-                $(this).removeClass("folderOpen").addClass("folderClose").next().removeClass("folderItemOpen")
-                    .addClass("folderItemClose").siblings("ul").show();
-            }
-        });
-        $(tree).on("click.tree", ".nodeTitle", function() {
-            $(this).prev().trigger("click.tree");
-        });
-    };
-
-    var _bindContextMenu = function(option, tree) {
-        _$.menu.init($(tree), ".treeNode", {
-            menuData: [{
-                    title: "delete",
-                    onclick: function(liItem, target) {
-                        var treeNode = null;
-                        if ($(target).is(".treeNode")) {
-                            treeNode = $(target);
-                        } else {
-                            treeNode = $(target).closest(".treeNode");
-                        }
-                        treeNode = treeNode.detach();
-                        _repaintTree($(tree));
-                        _recheckTree(option, tree);
-                        if (typeof option.onDelete === "function") {
-                            option.onDelete(treeNode);
-                        }
-                    }
-                }
-            ],
-            onMenu: function(target) {
-                $(tree).find(".keyFocus").removeClass("keyFocus");
-                if ($(target).is(".treeNode"))
-                    $(target).addClass("keyFocus");
-                else
-                    $(target).closest(".treeNode").addClass("keyFocus");
-            },
-            onMenuOff: function() {
-                $(tree).find(".keyFocus").removeClass("keyFocus");
-            }
-        });
-    };
-
-    var _repaintTree = function(tree, layer, emptyLine, option) {
-        var subLis = $(tree).find(">.treeNode");
-        layer = layer || 0;
-        emptyLine = emptyLine || [];
-        emptyLine = $.grep(emptyLine, function(n, i) {
-            return n < layer + 1;
-        });
-        subLis.each(function(index, item) {
-            var divs = $(item).find(">.nodeIcon");
-            divs.removeClass("first last");
-            for (var i = 0; i < layer; i++) {
-                if ($.inArray(i + 1, emptyLine) !== -1) {
-                    $(divs[i]).removeClass("line").addClass("nobg");
-                } else {
-                    $(divs[i]).removeClass("nobg").addClass("line");
-                }
-            }
-
-            if (index === 0) {
-                divs.addClass("first");
-                if (layer > 0) {
-                    divs.filter(".folderClose").removeClass("first");
-                }
-            }
-            if (index === subLis.length - 1) {
-                divs.addClass("last");
-                if ($(item).find(".treeNode").length)
-                    emptyLine.push(layer + 1);
-            }
-            _repaintTree($(item).find(">.subTree"), layer + 1, emptyLine);
-        });
-    };
-
-    var _recheckTree = function(option, tree) {
-        $(tree).find(">.treeNode").each(function(index, item) {
-            var liItem = $(item);
-            node = liItem.find(">.checkOne,>.checkHalf,>.checkNone");
-            var checked = liItem.find(".nodeIcon.checkOne:not(:has(div))").length;
-            var unchecked = liItem.find(".nodeIcon.checkNone:not(:has(div))").length;
-            if (checked === 0 && unchecked === 0)
-                return;
-            else {
-                node.removeClass("checkNone checkOne checkHalf");
-                if (checked === 0 && unchecked > 0)
-                    node.addClass("checkNone");
-                else if (checked > 0 && unchecked === 0)
-                    node.addClass("checkOne");
-                else
-                    node.addClass("checkHalf");
-            }
-            _recheckTree(option, liItem.find(">.subTree"));
-        });
-    };
-
-    var _bindCheckEvent = function(tree) {
-        $(tree).on("click.tree", ".checkNone,.checkOne,.checkHalf", function() {
-            if ($(this).is(".checkNone,.checkHalf")) {
-                $(this).addClass("checkOne").removeClass("checkNone checkHalf");
-            } else {
-                $(this).addClass("checkNone").removeClass("checkOne");
-            }
-            _processSubCheck($(this));
-            _processParentCheck($(this));
-        });
-    };
-
-    var _bindClickEvent = function(option, tree) {
-        $(tree).on("click.tree", ".nodeTitle,.leafItem", function() {
-            var data = $(this).closest(".treeNode").data("tree.data");
-            option.onSelect(data);
-        });
-    };
-
-    var _processSubCheck = function(node) {
-        if (node.is(".checkNone")) {
-            node.siblings("ul").find(".checkOne,.checkHalf").removeClass("checkOne checkHalf")
-                .addClass("checkNone");
-        } else if (node.is(".checkOne")) {
-            node.siblings("ul").find(".checkNone,.checkHalf").removeClass("checkNone checkHalf")
-                .addClass("checkOne");
-        }
-    };
-
-    var _processParentCheck = function(node) {
-        var parentNode = node.closest(".subTree").siblings(".checkOne,.checkNone,.checkHalf");
-        if (parentNode.length) {
-            parentNode.removeClass("checkOne checkNone checkHalf");
-            var checkOne = parentNode.siblings("ul").find(".checkOne").length;
-            var checkNone = parentNode.siblings("ul").find(".checkNone").length;
-            if (checkOne === 0) {
-                parentNode.addClass("checkNone");
-            } else if (checkNone === 0) {
-                parentNode.addClass("checkOne");
-            } else {
-                parentNode.addClass("checkHalf");
-            }
-            _processParentCheck(parentNode);
-        }
-    };
-
-    var _buildTree = function(option, nodes, parent, layer, emptyLine) {
+    var _buildTree = function(option, nodes, parent, layer, lastTree) {
         var tree = $(_containerTemp);
         if (!option.open && layer >= 1)
             tree.hide();
-        emptyLine = emptyLine || [];
-        if (parent) {
+        if (parent)
             parent.append(tree.addClass("subTree"));
-        } else {
+        else
             tree.addClass("rootTree");
-        }
-        emptyLine = $.grep(emptyLine, function(n, i) {
-            return n < layer + 1;
-        });
-        for (var i = 0; i < nodes.length; i++) {
-            _buildTreeNode(option, nodes[i], tree, layer, i === nodes.length - 1, i === 0, emptyLine);
-        }
-        tree.find(".checkOne").each(function(index, item) {
-            _processParentCheck($(item));
-        });
-        return tree;
-    };
 
-    //递归构建树节点
-    var _buildTreeNode = function(option, node, parent, layer, lastNode, firstNode, emptyLine) {
-        var nodeItem = $(_$.stringFormat(_nodeTemp, "treeNode"));
-        var hasChild = node.children && node.children.length;
-        var nodeIcon = "";
-        node.layer = layer;
-        for (var i = 0; i < layer; i++) {
-            if ($.inArray(i + 1, emptyLine) !== -1) {
-                nodeIcon = _buildTreeNodePrefix("nobg");
-            } else {
-                nodeIcon = _buildTreeNodePrefix("line", lastNode);
-            }
-            nodeItem.append(nodeIcon);
-        }
-
-        if (hasChild) {
-            nodeIcon = _buildTreeNodePrefix(option.open ? "folderClose" : "folderOpen", lastNode, layer > 0 ? false : firstNode);
-            nodeItem.append(nodeIcon);
-            nodeIcon = _buildTreeNodePrefix(option.open ? "folderItemClose" : "folderItemOpen", lastNode);
-        } else {
-            nodeIcon = _buildTreeNodePrefix("leaf", lastNode);
-            nodeItem.append(nodeIcon);
-            nodeIcon = _buildTreeNodePrefix("leafItem", lastNode);
-        }
-
-        nodeItem.append(nodeIcon);
-
-        if (option.checkbox) {
-            if (hasChild) {
-                nodeIcon = _buildTreeNodePrefix("checkNone");
-            } else {
-                nodeIcon = _buildTreeNodePrefix(node.checked ? "checkOne" : "checkNone");
-            }
-            nodeItem.append(nodeIcon);
-        }
-
-        nodeItem.append($(_$.stringFormat(_nodeContent, node.title)));
-        nodeItem.data("tree.data", node);
-
-        parent.append(nodeItem);
-
-        if (hasChild) {
-            if (lastNode) {
-                emptyLine.push(layer + 1);
-            }
-            _buildTree(option, node.children, nodeItem, layer + 1, emptyLine);
-        }
-    };
-
-    var _buildTreeNodePrefix = function(type, lastNode, firstNode) {
-        result = $(_$.stringFormat(_nodeIcon, type));
-        if (firstNode)
-            result.addClass("first");
-        if (lastNode)
-            result.addClass("last");
-        return result;
-    };
-
-    var _getValueForMuti = function(option, tree, ids) {
-        var result = [];
-        $(tree).find(".checkOne").each(function(index, item) {
-            var target = $(item);
-            if (target.prev().is(".leafItem")) {
-                var data = target.closest("li").data("tree.data");
-                result.push(ids ? data.id : data);
-            }
-        });
-        return result;
-    };
-
-    var _getTree = function(tree, list) {
-        list = list || [];
-        $(tree).find(">.treeNode").each(function(index, item) {
-            var data = $(item).data("tree.data");
-            data.children = [];
-            data.checked = $(item).find(".checkOne").length > 0;
-            var subTree = $(item).find(">.subTree");
-
-            list.push(data);
-            if (subTree.length) {
-                data.children = data.children || [];
-                subTree.each(function(subIndex, subItem) {
-                    _getTree($(subItem), data.children);
-                });
-            }
-        });
-        return list;
-    };
-
-    $.extend(_$.tree, {
-        init: function(data, option) {
-            option = $.extend({}, _option, option);
-            var _data = null;
-            if (data instanceof Array) {
-                _data = $.extend(true, [], data);
-            } else {
-                _data = $.extend(true, {}, data);
-            }
-            _init(option, _data);
-        },
-        getValue: function(container, ids) {
-            var tree = $(container).find(".rootTree");
-            var opt = tree.data("tree.option");
-            if (opt.checkbox) {
-                return _getValueForMuti(opt, tree, ids);
-            }
-        },
-        getTree: function(container) {
-            var tree = $(container).find(".rootTree");
-            return _getTree(tree);
-        }
-    });
-})();
-
-/*************************************************************
- * infosky.tree     rewirte
- *------------------------------------------------------------
- * Copyright InfoSky Corporation. All rights reserved.
- * Author: Chenhy(chenhy@infosky.com.cn)
- * Create Date: 2013-06-05
- ************************************************************/
-(function() {
-    _$ = _$ || {};
-    _$.newTree = function(item) {
-        this.item = item;
-    };
-
-    var _nodeTemp = "<li class='{0}'></li>",
-        _nodeIcon = "<div class='nodeIcon {0}'></div>",
-        _containerTemp = "<ul></ul>",
-        _nodeContent = "<a class='nodeTitle'>{0}</a>",
-        _option = {
-            container: null,
-            checkbox: true,
-            open: true,
-            contextMenu: true,
-            onDelete: null,
-            onSelect: null
-        };
-
-    var _init = function(option, data) {
-        var tree = _buildTree(option, data, null, 0);
-        tree.data("tree.option", option);
-        // _bindEvent(option, tree);
-        // if (option.checkbox) {
-        //     _bindCheckEvent(tree);
-        // }
-        // if (option.onSelect) {
-        //     _bindClickEvent(option, tree);
-        // }
-        // if (option.contextMenu) {
-        //     _bindContextMenu(option, tree);
-        // }
-        option.container.append(tree);
-    };
-
-    var _buildTree = function(option, nodes, parent, layer, lastUl) {
-        var tree = $(_containerTemp);
-        if (!option.open && layer >= 1)
-            tree.hide();
-        if (parent) {
-            parent.append(tree.addClass("subTree"));
-        } else {
-            tree.addClass("rootTree");
-        }
-        if (lastUl) {
+        if (lastTree)
             tree.addClass("lastNode");
-        }
 
         for (var i = 0; i < nodes.length; i++) {
             _buildTreeNode(option, nodes[i], tree, layer, i === nodes.length - 1, i === 0);
@@ -2214,7 +1891,7 @@
     };
 
     var _buildTreeNode = function(option, node, parent, layer, lastNode, firstNode) {
-        var nodeItem = $(_$.stringFormat(_nodeTemp, "treeNode"));
+        var nodeItem = $(_nodeTemp);
         var hasChild = node.children && node.children.length;
         if (hasChild) {
             nodeIcon = _buildTreeNodePrefix(option.open ? "folderClose" : "folderOpen", lastNode, layer > 0 ? false : firstNode);
@@ -2256,6 +1933,43 @@
         return result;
     };
 
+    var _bindEvent = function(option, tree) {
+        $(tree).on("click.tree", ".folderClose,.folderOpen", function() {
+            if ($(this).is(".folderClose")) {
+                $(this).removeClass("folderClose").addClass("folderOpen").next().removeClass("folderItemClose")
+                    .addClass("folderItemOpen").siblings("ul").hide();
+            } else {
+                $(this).removeClass("folderOpen").addClass("folderClose").next().removeClass("folderItemOpen")
+                    .addClass("folderItemClose").siblings("ul").show();
+            }
+        });
+    };
+
+    var _bindCheckEvent = function(tree) {
+        $(tree).on("click.tree", ".nodeTitle", function() {
+            $(this).prev().trigger("click.tree");
+        });
+        $(tree).on("click.tree", ".checkNone,.checkOne,.checkHalf", function() {
+            if ($(this).is(".checkNone,.checkHalf")) {
+                $(this).addClass("checkOne").removeClass("checkNone checkHalf");
+            } else {
+                $(this).addClass("checkNone").removeClass("checkOne");
+            }
+            _processSubCheck($(this));
+            _processParentCheck($(this));
+        });
+    };
+
+    var _processSubCheck = function(node) {
+        if (node.is(".checkNone")) {
+            node.siblings("ul").find(".checkOne,.checkHalf").removeClass("checkOne checkHalf")
+                .addClass("checkNone");
+        } else if (node.is(".checkOne")) {
+            node.siblings("ul").find(".checkNone,.checkHalf").removeClass("checkNone checkHalf")
+                .addClass("checkOne");
+        }
+    };
+
     var _processParentCheck = function(node) {
         var parentNode = node.closest(".subTree").siblings(".checkOne,.checkNone,.checkHalf");
         if (parentNode.length) {
@@ -2273,7 +1987,129 @@
         }
     };
 
-    $.extend(_$.newTree, {
+    var _bindClickEvent = function(option, tree) {
+        $(tree).on("click.tree", ".nodeTitle,.leafItem", function() {
+            var data = $(this).closest(".treeNode").data("tree.data");
+            option.onSelect(data);
+        });
+    };
+
+    var _bindContextMenu = function(option, tree) {
+        _$.menu.init($(tree), ".treeNode", {
+            menuData: [{
+                    title: "delete",
+                    onclick: function(liItem, target) {
+                        var treeNode = null;
+                        if ($(target).is(".treeNode")) {
+                            treeNode = $(target);
+                        } else {
+                            treeNode = $(target).closest(".treeNode");
+                        }
+                        treeParent = treeNode.parent();
+                        treeNode = treeNode.detach();
+                        _repaintTree($(tree), treeParent);
+                        _recheckTree($(tree), treeParent, option);
+                        if (typeof option.onDelete === "function") {
+                            option.onDelete(treeNode);
+                        }
+                    }
+                }
+            ],
+            onMenu: function(target) {
+                $(tree).find(".keyFocus").removeClass("keyFocus");
+                if ($(target).is(".treeNode"))
+                    $(target).addClass("keyFocus");
+                else
+                    $(target).closest(".treeNode").addClass("keyFocus");
+            },
+            onMenuOff: function() {
+                $(tree).find(".keyFocus").removeClass("keyFocus");
+            }
+        });
+    };
+
+    var _repaintTree = function(tree, node, option) {
+        var siblLis = $(node).find(">.treeNode");
+        siblLis.last().find(">.subTree").addClass("lastNode");
+        siblLis.last().find(">.nodeIcon").addClass("last");
+
+        siblLis.first().find(">.subTree").addClass("first");
+        siblLis.first().find(">.nodeIcon").addClass("first");
+    };
+
+    var _recheckTree = function(tree, node) {
+        var liItem = $(node).closest(".treeNode");
+
+        var checked = liItem.find(".nodeIcon.checkOne:not(:has(div))").length;
+        var unchecked = liItem.find(".nodeIcon.checkNone:not(:has(div))").length;
+        if (checked === 0 && unchecked === 0)
+            return;
+        else {
+            var nodeItem = liItem.find(">.checkOne,>.checkHalf,>.checkNone");
+            nodeItem.removeClass("checkNone checkOne checkHalf");
+            if (checked === 0 && unchecked > 0)
+                nodeItem.addClass("checkNone");
+            else if (checked > 0 && unchecked === 0)
+                nodeItem.addClass("checkOne");
+            else
+                nodeItem.addClass("checkHalf");
+        }
+        _recheckTree(tree, liItem.closest(".subTree"));
+    };
+
+    var _recheckAllTree = function(option, tree) {
+        $(tree).find(">.treeNode").each(function(index, item) {
+            var liItem = $(item);
+            var node = liItem.find(">.checkOne,>.checkHalf,>.checkNone");
+            var checked = liItem.find(".nodeIcon.checkOne:not(:has(div))").length;
+            var unchecked = liItem.find(".nodeIcon.checkNone:not(:has(div))").length;
+            if (checked === 0 && unchecked === 0)
+                return;
+            else {
+                node.removeClass("checkNone checkOne checkHalf");
+                if (checked === 0 && unchecked > 0)
+                    node.addClass("checkNone");
+                else if (checked > 0 && unchecked === 0)
+                    node.addClass("checkOne");
+                else
+                    node.addClass("checkHalf");
+            }
+            _recheckTree(option, liItem.find(">.subTree"));
+        });
+    };
+
+    var _getValueForMuti = function(option, tree, ids) {
+        var result = [];
+        $(tree).find(".checkOne").each(function(index, item) {
+            var target = $(item);
+            if (target.prev().is(".leafItem")) {
+                var data = target.closest("li").data("tree.data");
+                result.push(ids ? data.id : data);
+            }
+        });
+        return result;
+    };
+
+    var _getTree = function(tree, list) {
+        list = list || [];
+        $(tree).find(">.treeNode").each(function(index, item) {
+            var data = $(item).data("tree.data");
+            data.children = [];
+            data.checked = $(item).find(".checkOne").length > 0;
+            var subTree = $(item).find(">.subTree");
+
+            list.push(data);
+            if (subTree.length) {
+                data.children = data.children || [];
+                subTree.each(function(subIndex, subItem) {
+                    _getTree($(subItem), data.children);
+                });
+            }
+        });
+        return list;
+    };
+
+    $.extend(_$.tree, {
         init: function(data, option) {
             option = $.extend({}, _option, option);
             var _data = null;

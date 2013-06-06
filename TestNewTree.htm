@@ -5,6 +5,7 @@
     <script type="text/javascript" src="Webresources/javascript/infosky/infosky.js"></script>
     <script type="text/javascript" src="Webresources/javascript/framework/jquery.color.js"></script>
     <script type="text/javascript" src="Webresources/javascript/data/treejson.js"></script>
+    <script type="text/javascript" src="Webresources/javascript/data/treeData.js"></script>
     <link rel="stylesheet" type="text/css" href="Webresources/css/infosky.css" />
     <style type="text/css">
 	.treeArea{
@@ -28,12 +29,13 @@
 </html>
 <script type="text/javascript">
     (function () {
-        _$.newTree.init(treeJson, {
+        _$.tree.init(treeJson, {
             container: $(".treeArea"),
             onDelete: function (data) { },
             onSelect: function (data) {
                 console.info(data);
-            }
+            },
+            open:false
         });
     })();
 </script>

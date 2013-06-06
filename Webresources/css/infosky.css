@@ -85,3 +85,5 @@ body .tptDiv ul .spliHold{background: #e0ffe0;border: 1px solid #68FF66;cursor: 
 .first.folderOpen{background-position: -18px -72px;cursor: pointer;}
 .rootTree .keyFocus{background-color: #FFDC8C;cursor: pointer;transition: background-color 0.2s ease 0s; }
 
+.subTree{padding-left: 18px;background: url(../img/d.gif) repeat-y -90px 0;}
+.lastNode{background: none;}

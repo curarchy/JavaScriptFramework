@@ -10,9 +10,13 @@ namespace GenData
     {
         static void Main(string[] args)
         {
-            string result = AirportModel.GetDataString();
-            result = "var airport = \"" + result + "\";";
-            FileModel.Save(Const.JsBaseDirectoryPath + "airport.js", result);
+            //string result = AirportModel.GetDataString();
+            //result = "var airport = \"" + result + "\";";
+            //FileModel.Save(Const.JsBaseDirectoryPath + "airport.js", result);
+
+            string result = TreeData.BuildTree();
+            result = "var airport ="+  result +";";
+            FileModel.Save(Const.JsBaseDirectoryPath + "treeData.js", result);
         }
     }
 }
