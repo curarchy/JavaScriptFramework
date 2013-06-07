@@ -62,7 +62,8 @@
                 }, {
                     id: 21101,
                     title: "人民广场",
-                    key: "renminguangchang"
+                    key: "renminguangchang",
+                    checked: true
                 }
 								]
             }, {

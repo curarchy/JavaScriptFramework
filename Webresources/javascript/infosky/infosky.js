@@ -1834,6 +1834,7 @@
  * Author: Chenhy(chenhy@infosky.com.cn)
  * Create Date: 2013-06-05
  ************************************************************/
+
 (function() {
     _$ = _$ || {};
     _$.tree = function(item) {
@@ -1850,10 +1851,15 @@
             open: true,
             contextMenu: true,
             onDelete: null,
-            onSelect: null
+            onSelect: null,
+            lazyLoad: false,
+            lazyUp: true
         };
 
     var _init = function(option, data) {
+        if (option.lazyLoad) {
+            option.open = false;
+        }
         var tree = _buildTree(option, data, null, 0);
         tree.data("tree.option", option);
         _bindEvent(option, tree);
@@ -1869,9 +1875,17 @@
         option.container.append(tree);
     };
 
-    var _buildTree = function(option, nodes, parent, layer, lastTree) {
+    var _hash = {}, _hashKey = 0;
+
+    var _buildTree = function(option, nodes, parent, layer, lastTree, lazyTrick) {
+        if (option.lazyLoad && layer >= 1 && !lazyTrick) {
+            var key = _hashKey++;
+            _hash["" + key] = nodes;
+            parent.data("tree.lazyLoad", key);
+            return;
+        }
         var tree = $(_containerTemp);
-        if (!option.open && layer >= 1)
+        if (!option.open && layer >= 1 && !lazyTrick)
             tree.hide();
         if (parent)
             parent.append(tree.addClass("subTree"));
@@ -1924,6 +1938,10 @@
         }
     };
 
+    var _buildLazyTree = function(option) {
+
+    };
+
     var _buildTreeNodePrefix = function(type, lastNode, firstNode) {
         result = $(_$.stringFormat(_nodeIcon, type));
         if (firstNode)
@@ -1941,6 +1959,23 @@
             } else {
                 $(this).removeClass("folderOpen").addClass("folderClose").next().removeClass("folderItemOpen")
                     .addClass("folderItemClose").siblings("ul").show();
+                if (option.lazyLoad) {
+                    var item = $(this).parent();
+                    var key = item.data("tree.lazyLoad");
+                    data = _hash[key];
+                    if (data) {
+                        delete(_hash[key]);
+                        _buildTree(option, data, item, 4, !item.next().is("li"), true);
+                    }
+                    if (option.checkbox) {
+                        var box = $(this).siblings(".checkOne,.checkNone,.checkHalf");
+                        option.lazyUp ?
+                            _processSubCheck(box) :
+                            _processParentCheck(box.siblings(".subTree")
+                            .find(">.treeNode").first()
+                            .find(".checkOne,.checkNone,.checkHalf"));
+                    }
+                }
             }
         });
     };
