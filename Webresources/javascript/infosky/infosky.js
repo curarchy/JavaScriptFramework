@@ -1938,10 +1938,6 @@
         }
     };
 
-    var _buildLazyTree = function(option) {
-
-    };
-
     var _buildTreeNodePrefix = function(type, lastNode, firstNode) {
         result = $(_$.stringFormat(_nodeIcon, type));
         if (firstNode)
