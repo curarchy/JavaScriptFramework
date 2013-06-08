@@ -11,15 +11,16 @@
 <style>body { behavior: url("Webresources/javascript/frameworl/csshover3.htc"); }</style>
     <![endif]-->
 </head>
-<body>
-    <div class="tag-container" style="margin: 50px;">
+<body><label>带tag的自动完成</label>
+    <div class="tag-container" style="margin: 50px auto;">
         <input type="text" id="tagInput" />
     </div>
-    <div class="filter-container" style="margin: 50px;">
-        <input id="filterInput" type="text" />
+    <div class="filter-container" style="margin: 50px auto;width:100px;">
+        <label>自动完成</label><input id="filterInput" type="text" style="width:100px;"/>
     </div>
-    <div class="filter-container" style="margin: 50px;">
-        <input id="select1" type="text"/>
+    <div class="filter-container" style="margin: 50px auto;width:100px;">
+        <label>多选框、自定义值的select</label>
+        <input id="select1" type="text" style="width:100px;"/>
         <select id="forselect1" style="display:none;">
             <optgroup label="国内">
                 <option value="SHA">上海虹桥</option>
@@ -63,16 +64,24 @@
             </optgroup>
         </select>
     </div>
-    <textarea id="consoleArea"></textarea>
+
+        <div class="filter-container" style="margin: 50px auto;width:200px;">
+
+<input id="pld1" type="text" placeholder="请输入xxx" style="margin:10px;"/>
+<input id="pld2" type="password" placeholder="请输入xxx" style="margin:10px;"/>
+<textarea id="pld3" placeholder="请输入xxx" style="margin:10px;"></textarea>
+
+        </div>
+<!--     <textarea id="consoleArea"></textarea>
     <p>
         <a onclick='eval($("#consoleArea").val())'>控制台</a>
     </p>
     <div id="consoleDiv" style="margin: 50px auto; text-align: center;">
-    </div>
+    </div> -->
 </body>
 </html>
 <script type="text/javascript">
-    (function () {
+    (function() {
         //自动完成初始化
         _$.auto.init($("#filterInput"), airport, {
             sort: 2
@@ -81,13 +90,22 @@
         //自动完成 + tag 初始化
         _$.auto.init($("#tagInput"), airport, {
             sort: 4,
-            callback: function (data) {
+            callback: function(data) {
                 _$.tag.setValue($("#tagInput"));
             }
-        });        
+        });
         _$.tag.init($("#tagInput"));
-        
+
         //多选初始化
-        _$.select.init($("#select1"),$("#forselect1"),{"muti":true});
+        _$.select.init($("#select1"), $("#forselect1"), {
+            "muti": true
+        });
+
+        //placeholder
+
     })();
+
+    $(function() {
+        _$.placeholder.init($("#pld1,#pld2,#pld3"))
+    });
 </script>

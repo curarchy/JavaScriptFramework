@@ -1,6 +1,6 @@
 ﻿/*base*/
 body { font-size: 12px; }
-input { border: 1px solid #aaa;padding-left: 2px; }
+input,textarea { border: 1px solid #aaa;padding-left: 2px; }
 ul{list-style: none inside none; margin: 0; padding: 0;}
 
 /*tag*/
@@ -88,3 +88,6 @@ body .tptDiv ul .spliHold{background: #e0ffe0;border: 1px solid #68FF66;cursor: 
 .subTree{padding-left: 18px;background: url(../img/d.gif) repeat-y -90px 0;}
 .lastNode{background: none;}
 .treeNode{_zoom:1;}
+
+/*placeholder*/
+.placeholder{color:#a9a9a9;}

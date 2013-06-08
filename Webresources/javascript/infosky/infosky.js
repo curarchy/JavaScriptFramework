@@ -2230,6 +2230,80 @@
 })();
 
 /*************************************************************
+ * infosky.placeholder
+ *------------------------------------------------------------
+ * Copyright InfoSky Corporation. All rights reserved.
+ * Author: Chenhy(chenhy@infosky.com.cn)
+ * Create Date: 2013-06-08
+ ************************************************************/
+
+(function() {
+    _$ = _$ || {};
+    _$.placeholder = function(item) {
+        this.item = item;
+    };
+
+    var _option = {
+        placeholderClass: "placeholder"
+    };
+
+    var _init = function(element, option) {
+        if (!element.is("input[type='text'],textarea"))
+            return;
+        var pdVal = element.attr("placeholder");
+        if (element.val() === pdVal)
+            element.addClass(option.placeholderClass);
+        else if (element.val() === "")
+            element.addClass(option.placeholderClass).val(pdVal);
+        else
+            element.removeClass(option.placeholderClass);
+        element.on("focus.placeholder clear.placeholder", function() {
+            element.removeClass(option.placeholderClass);
+            if (element.val() === pdVal) {
+                element.val("");
+            }
+        }).on("blur.placeholder reset.placeholder", function() {
+            if (element.val() === "" || element.val() === pdVal) {
+                element.addClass(option.placeholderClass).val(pdVal);
+            }
+        });
+    };
+
+    var _clear = function(element) {
+        element.trigger("clear.placeholder");
+    };
+
+    var _reset = function(element) {
+        element.trigger("reset.placeholder");
+    };
+
+    $.extend(_$.placeholder, {
+        init: function(target, option) {
+            if ('placeholder' in document.createElement('input'))
+                return;
+            option = $.extend({}, _option, option);
+            $(target).each(function(index, item) {
+                _init($(item), option);
+            });
+        },
+        clear: function(target) {
+            if ('placeholder' in document.createElement('input'))
+                return;
+            $(target).each(function(index, item) {
+                _clear($(item));
+            });
+        },
+        reset: function(target) {
+            if ('placeholder' in document.createElement('input'))
+                return;
+            $(target).each(function(index, item) {
+                _reset($(item));
+            });
+        }
+    });
+})();
+
+/*************************************************************
  * infosky.tip
  *------------------------------------------------------------
  * Copyright InfoSky Corporation. All rights reserved.
