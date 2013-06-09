@@ -109,14 +109,20 @@
 
         _$.select.init($("#tagSelect"), $("#forselect1"), {
             "muti": false,
-            onchange:function(){
+            onchange: function() {
                 _$.tag.setValue($("#tagSelect"));
                 _$.select.show($("#tagSelect"));
             },
-            clearAll:false,
-            selectAll:false
-        })
+            clearAll: false,
+            selectAll: false
+        });
 
+        _$.tag.init($("#tagSelect"), {
+            "onfocus": function(e) {
+                _$.select.show($("#tagSelect"));
+                e.stopPropagation();
+            }
+        });
     })();
 
     //placeholder

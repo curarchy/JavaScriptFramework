@@ -787,103 +787,106 @@
         element: "<span class='tag-span'>{0}<span class='tag-delete'>x</span></span>",
         wordWidth: 8,
         repeatable: false,
-        repeatclear:true
+        repeatclear: true
     };
 
-    var _init = function(obj) {
+    var _init = function(obj, option) {
         $(obj).on("keydown.tag", function(e) {
             switch (e.keyCode) {
                 case 8:
                     //退格
                 case 37:
-                    _toLeft(obj, e);
+                    _toLeft(obj, e, option);
                     break;
                 case 39:
-                    _toRight(obj);
+                    _toRight(obj, option);
                     break;
                 case 9:
-                    _tabClick(obj, e);
+                    _tabClick(obj, e, option);
                     break;
                 case 13:
                 case 32:
                     //回车，空格
-                    _add(obj);
+                    _add(obj, option);
                     e.preventDefault();
                     break;
                 case 59:
-                    _add(obj);
+                    _add(obj, option);
                     e.preventDefault();
                     break;
                 default:
                     break;
             }
-            _setWidth($(this));
+            _setWidth($(this), option);
         }).on("keyup.tag", function() {
-            _setWidth($(this));
+            _setWidth($(this), option);
         }).on("blur.tag", function() {
             // _add($(this));
             // _setInputAtLast($(this));
             if ($(obj).val().length === 0) {
-                _setInputAtLast($(obj));
+                _setInputAtLast($(obj), option);
             }
-        }).parent().on("click.tag", function() {
+        }).parent().on("click.tag", function(e) {
             if ($(obj).val().length === 0) {
-                _setInputAtLast($(obj));
+                _setInputAtLast($(obj), option);
             }
             $(obj).focus();
+            if (option.onfocus) {
+                option.onfocus(e);
+            }
         });
     };
 
-    var _toLeft = function(obj, e) {
+    var _toLeft = function(obj, e, option) {
         var caret = _$.caret(obj);
         if (caret.begin === 0 && caret.end === 0) {
             if ($(obj).prev().is(".tag-span")) {
-                _setToEdit($(obj).prev());
+                _setToEdit($(obj).prev(), option);
                 e.preventDefault();
             }
         }
     };
 
-    var _toRight = function(obj) {
+    var _toRight = function(obj, option) {
         var caret = _$.caret(obj);
         if (caret.begin === $(obj).val().length) {
             if ($(obj).next().is(".tag-span")) {
-                _setToEdit($(obj).next());
+                _setToEdit($(obj).next(), option);
             } else {
-                _add(obj);
+                _add(obj, option);
             }
         }
     };
 
-    var _tabClick = function(obj, e) {
+    var _tabClick = function(obj, e, option) {
         if ($(obj).next().is(".tag-span")) {
-            _setToEdit($(obj).next());
+            _setToEdit($(obj).next(), option);
             e.preventDefault();
         } else {
             if ($(obj).val()) {
                 e.preventDefault();
             }
-            _add(obj);
+            _add(obj, option);
         }
     };
 
-    var _add = function(obj, text) {
+    var _add = function(obj, text, option) {
         text = text || $.trim($(obj).val());
-        if (!_option.repeatable) {
+        if (!option.repeatable) {
             var objs = _getTag(obj, text);
             if (objs.length) {
                 _$.ui.blink(objs);
-                if(_option.repeatclear){
+                if (option.repeatclear) {
                     $(obj).val("");
                 }
                 return;
             }
         }
         if (text.length) {
-            $(obj).before($(_$.stringFormat(_option.element, text)).data("tag.val", text));
+            $(obj).before($(_$.stringFormat(option.element, text)).data("tag.val", text));
             $(obj).val("").prev()
                 .on("click.tag", function() {
-                _setToEdit(this);
+                _setToEdit(this, option);
             }).find(".tag-delete")
                 .on("click.tag", function(event) {
                 $(this).parent().siblings("input").focus();
@@ -910,11 +913,11 @@
         if (text.length === 0) $(obj).prev(".tag-container span").remove();
     };
 
-    var _setWidth = function(obj) {
+    var _setWidth = function(obj, option) {
         if ($(obj).is("input")) {
             var text = $(obj).val();
             var count = text.replace(/[^\u0000-\u00ff]/g, "aa").length;
-            $(obj).css("width", (count * _option.wordWidth + 12) + "px");
+            $(obj).css("width", (count * option.wordWidth + 12) + "px");
         }
     };
 
@@ -923,9 +926,9 @@
         $(obj).off(".tag");
     };
 
-    var _setToEdit = function(span) {
+    var _setToEdit = function(span, option) {
         var input = $(span).siblings("input");
-        _add(input);
+        _add(input, option);
         input.detach();
         var text = $(span).data("tag.val");
         $(span).replaceWith(input.val(text));
@@ -944,10 +947,11 @@
         tagSetup: function(params) {
             $.extend(_option, params);
         },
-        init: function(obj) {
+        init: function(obj, option) {
             if (obj instanceof jQuery) {
                 obj.filter("input").each(function(index, item) {
-                    _init(item);
+                    var opt = $.extend({}, _option, option);
+                    _init(item, opt);
                     _$.tag.setValue(item);
                 });
             }
