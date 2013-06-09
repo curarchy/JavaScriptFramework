@@ -1459,13 +1459,17 @@
 
     var _liItem = "<li class='{1}'><span class='spanRight'>{2}{3}</span><span>{0}</span></li>",
         _mutiCheckbox = "<input type='checkbox'></input>",
+        _menuArea = "<div class='autoSort'><a class='sortContent'><span>操作</span><ul></ul></a></div>",
+        _menuItem = "<li class='{1}'>{0}</li>",
         _editArea = "<li class='editLi selectItem'><input type='text' class='editTxt'/><span><a class='editAdd'>添加</a></span></li>",
         _option = {
             editAble: true,
             muti: true,
             onchange: $.noop,
             optChar: ",",
-            keyFocus: 0
+            keyFocus: 0,
+            clearAll: true,
+            selectAll: true
         };
 
     var _init = function(option) {
@@ -1646,7 +1650,7 @@
         }
         input.val("");
         var liItem = $(_$.stringFormat(_liItem, value, "selectItem", value, option.muti ? _mutiCheckbox : ""));
-        option.popDiv.find("li:last").before(liItem);
+        option.popDiv.find(">ul li:last").before(liItem);
         option.keyFocus++;
         liItem.on("click.select", function(e) {
             _bindLiItemEvent(option, liItem, e);
@@ -1696,15 +1700,49 @@
         });
     };
 
+    var _buildMenu = function(option) {
+        var menu, menuItem;
+        if (option.clearAll || option.selectAll) {
+            menu = $(_menuArea).css({
+                top: "inherit",
+                left: "inherit",
+                position: "fixed",
+                "z-index":200003
+            });
+            option.popDiv.append(menu);
+        }
+        if (option.clearAll) {
+            var area = option.popDiv;
+            menuItem = $(_$.stringFormat(_menuItem, "全部取消", ""));
+            menuItem.on("click.select", function() {
+                area.find(".selectItem").removeClass("liSelected");
+                area.find("input:checked").prop("checked", false);
+                $(option.input).val("");
+            });
+            menu.find("ul").append(menuItem);
+        }
+        if (option.selectAll) {
+            menuItem = $(_$.stringFormat(_menuItem, "全部选中", ""));
+            menuItem.on("click.select", function() {
+                area.find(".selectItem").not(".editLi").addClass("liSelected");
+                area.find("input:checkbox").prop("checked", true);
+                var result = [];
+                option.popDiv.find("input:checked").each(function(index, item) {
+                    data = $(item).closest("li").addClass("liSelected").data("selectData");
+                    result.push(data.value);
+                    $(option.input).val(result.join(option.optChar));
+                });
+            });
+            menu.find("ul").append(menuItem);
+        }
+    };
+
     var _show = function(option) {
         if (!option.popDiv) {
             option.keyFocus = 0;
             option.popDiv = $("<div class='tptDiv selectDiv'><ul></ul></div>");
-            if (option.editAble) {
-                var editItem = "";
-                option.popDiv.append(editItem);
-            }
-            var ulArea = option.popDiv.find("ul");
+            _buildMenu(option);
+            var ulArea = option.popDiv.find(">ul");
             $.each(option.data, function(index, item) {
                 var li = null;
                 if (item.nodeType === "group") {
@@ -1741,6 +1779,10 @@
             "position": "absolute",
             "z-index": 200002
         }).show().find(".keyFocus").removeClass("keyFocus");
+        if (option.clearAll) {
+            var width = option.popDiv.width();
+            option.popDiv.find(".autoSort").css("marginLeft", width + 1 + "px");
+        }
     };
 
     var _setVal = function(input, value) {
@@ -1828,7 +1870,7 @@
 })();
 
 /*************************************************************
- * infosky.tree     rewrite
+ * infosky.tree
  *------------------------------------------------------------
  * Copyright InfoSky Corporation. All rights reserved.
  * Author: Chenhy(chenhy@infosky.com.cn)
@@ -2277,9 +2319,13 @@
         element.trigger("reset.placeholder");
     };
 
+    var _supportNative = function() {
+        return 'placeholder' in document.createElement('input');
+    };
+
     $.extend(_$.placeholder, {
         init: function(target, option) {
-            if ('placeholder' in document.createElement('input'))
+            if (_supportNative())
                 return;
             option = $.extend({}, _option, option);
             $(target).each(function(index, item) {
@@ -2287,14 +2333,14 @@
             });
         },
         clear: function(target) {
-            if ('placeholder' in document.createElement('input'))
+            if (_supportNative())
                 return;
             $(target).each(function(index, item) {
                 _clear($(item));
             });
         },
         reset: function(target) {
-            if ('placeholder' in document.createElement('input'))
+            if (_supportNative())
                 return;
             $(target).each(function(index, item) {
                 _reset($(item));

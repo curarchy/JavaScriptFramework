@@ -51,9 +51,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="test.htm" />
-    <Content Include="TestMuti_Filter.htm" />
-    <Content Include="TestNewTree.htm" />
+    <Content Include="TestInput.htm" />
     <Content Include="TestTree.htm" />
     <Content Include="TestVali.htm" />
     <Content Include="Webresources\css\infosky.css" />
