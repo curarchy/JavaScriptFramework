@@ -786,7 +786,8 @@
     var _option = {
         element: "<span class='tag-span'>{0}<span class='tag-delete'>x</span></span>",
         wordWidth: 8,
-        repeatable: false
+        repeatable: false,
+        repeatclear:true
     };
 
     var _init = function(obj) {
@@ -872,6 +873,9 @@
             var objs = _getTag(obj, text);
             if (objs.length) {
                 _$.ui.blink(objs);
+                if(_option.repeatclear){
+                    $(obj).val("");
+                }
                 return;
             }
         }
@@ -1500,12 +1504,14 @@
 
         $(document).on("click.select", function(e) {
             if (option.popDiv) {
-                if ($.contains(option.popDiv.get(0), e.target))
-                    return;
-                else{
+                if ($.contains(option.popDiv.get(0), e.target)) {
+                    if ($(e.target).not(".editTxt"))
+                        return;
+                } else {
                     option.popDiv.hide();
-                $(option.menu).hide();
-            }}
+                    $(option.menu).hide();
+                }
+            }
         });
 
         $(element).on("click.select", function() {
@@ -1713,7 +1719,7 @@
             option.menu = option.menu || $(_menuArea);
             option.menu.css({
                 top: top + "px",
-                left: left + width+1 + "px",
+                left: left + width + 1 + "px",
                 position: "absolute",
                 "z-index": 200003
             }).addClass("tptDiv selectSort");
