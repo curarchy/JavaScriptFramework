@@ -58,8 +58,7 @@ body .tptDiv ul .spliHold{background: #e0ffe0;border: 1px solid #68FF66;cursor: 
 .selectDiv ul .editLi:hover{background: #fff;cursor: default;}
 .selectDiv ul .editLi.selectItem.keyFocus{border:1px solid #FFFFFF;color: #000;}
 .selectDiv ul .editLi.selectItem.keyFocus input{border-color: red;}
-.selectDiv .autoSort .sortContent ul{width:65px;}
-
+.selectSort .sortContent ul{width:65px;display: none;padding: 0.5em;right: -1px;text-align: right;background: #fff;border:1px solid #aaa;}
 /*tree*/
 .nodeIcon {display: inline-block;_display:inline;_zoom:1;height:18px;width: 18px;vertical-align: middle; background: url(../img/d.gif) no-repeat -90px 0;cursor: default;}
 .last.folderOpen{background-position: -54px 0;cursor: pointer;}

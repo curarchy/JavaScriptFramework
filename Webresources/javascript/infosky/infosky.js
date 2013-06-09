@@ -1502,9 +1502,10 @@
             if (option.popDiv) {
                 if ($.contains(option.popDiv.get(0), e.target))
                     return;
-                else
+                else{
                     option.popDiv.hide();
-            }
+                $(option.menu).hide();
+            }}
         });
 
         $(element).on("click.select", function() {
@@ -1514,6 +1515,7 @@
             switch (e.keyCode) {
                 case 9: //tab
                     option.popDiv.hide();
+                    $(option.menu).hide();
                     return;
                 case 38:
                     //↑
@@ -1610,6 +1612,7 @@
 
     var _esc = function(option) {
         option.popDiv.hide();
+        $(option.menu).hide();
     };
 
     var _bindLiItemEvent = function(option, liItem, e) {
@@ -1632,6 +1635,10 @@
             data = liItem.data("selectData");
             $(option.input).val(data.value);
             option.popDiv.hide();
+            $(option.menu).hide();
+        }
+        if (option.onchange) {
+            option.onchange();
         }
     };
 
@@ -1700,40 +1707,44 @@
         });
     };
 
-    var _buildMenu = function(option) {
+    var _buildMenu = function(option, top, left, width) {
         var menu, menuItem;
         if (option.clearAll || option.selectAll) {
-            menu = $(_menuArea).css({
-                top: "inherit",
-                left: "inherit",
-                position: "fixed",
-                "z-index":200003
-            });
-            option.popDiv.append(menu);
-        }
-        if (option.clearAll) {
-            var area = option.popDiv;
-            menuItem = $(_$.stringFormat(_menuItem, "全部取消", ""));
-            menuItem.on("click.select", function() {
-                area.find(".selectItem").removeClass("liSelected");
-                area.find("input:checked").prop("checked", false);
-                $(option.input).val("");
-            });
-            menu.find("ul").append(menuItem);
-        }
-        if (option.selectAll) {
-            menuItem = $(_$.stringFormat(_menuItem, "全部选中", ""));
-            menuItem.on("click.select", function() {
-                area.find(".selectItem").not(".editLi").addClass("liSelected");
-                area.find("input:checkbox").prop("checked", true);
-                var result = [];
-                option.popDiv.find("input:checked").each(function(index, item) {
-                    data = $(item).closest("li").addClass("liSelected").data("selectData");
-                    result.push(data.value);
-                    $(option.input).val(result.join(option.optChar));
-                });
-            });
-            menu.find("ul").append(menuItem);
+            option.menu = option.menu || $(_menuArea);
+            option.menu.css({
+                top: top + "px",
+                left: left + width+1 + "px",
+                position: "absolute",
+                "z-index": 200003
+            }).addClass("tptDiv selectSort");
+            var area = option.popDiv.find("ul");
+            if (!$.contains($("body").get(0), option.menu.get(0))) {
+                $("body").append(option.menu);
+                if (option.clearAll) {
+                    menuItem = $(_$.stringFormat(_menuItem, "全部取消", ""));
+                    menuItem.on("click.select", function() {
+                        area.find(".selectItem").removeClass("liSelected");
+                        area.find("input:checked").prop("checked", false);
+                        $(option.input).val("");
+                    });
+                    option.menu.find("ul").append(menuItem);
+                }
+                if (option.selectAll) {
+                    menuItem = $(_$.stringFormat(_menuItem, "全部选中", ""));
+                    menuItem.on("click.select", function() {
+                        area.find(".selectItem").not(".editLi").addClass("liSelected");
+                        area.find("input:checkbox").prop("checked", true);
+                        var result = [];
+                        option.popDiv.find("input:checked").each(function(index, item) {
+                            data = $(item).closest("li").addClass("liSelected").data("selectData");
+                            result.push(data.value);
+                            $(option.input).val(result.join(option.optChar));
+                        });
+                    });
+                    option.menu.find("ul").append(menuItem);
+                }
+            }
+            option.menu.show();
         }
     };
 
@@ -1741,7 +1752,6 @@
         if (!option.popDiv) {
             option.keyFocus = 0;
             option.popDiv = $("<div class='tptDiv selectDiv'><ul></ul></div>");
-            _buildMenu(option);
             var ulArea = option.popDiv.find(">ul");
             $.each(option.data, function(index, item) {
                 var li = null;
@@ -1779,10 +1789,13 @@
             "position": "absolute",
             "z-index": 200002
         }).show().find(".keyFocus").removeClass("keyFocus");
-        if (option.clearAll) {
-            var width = option.popDiv.width();
-            option.popDiv.find(".autoSort").css("marginLeft", width + 1 + "px");
-        }
+
+        var width = option.popDiv.width();
+        _buildMenu(option, top, left, width);
+    };
+
+    var _triggerShow = function(input) {
+        $(input).trigger("click.select");
     };
 
     var _setVal = function(input, value) {
@@ -1791,6 +1804,7 @@
         if (!option.popDiv) {
             _show(option);
             option.popDiv.hide();
+            $(option.menu).hide();
         }
         var lis = option.popDiv.find(".selectItem").not(".editLi");
         lis.filter(".liSelected").removeClass("liSelected").find("input").prop("checked", false);
@@ -1865,6 +1879,9 @@
                     _setVal($(item), value);
                 });
             }
+        },
+        show: function(input) {
+            _triggerShow(input);
         }
     });
 })();
