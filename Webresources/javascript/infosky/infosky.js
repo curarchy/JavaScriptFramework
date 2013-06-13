@@ -1895,6 +1895,8 @@
         setValue: function(input, value) {
             if (input instanceof jQuery) {
                 return input.filter("input").each(function(index, item) {
+                    if (value === undefined)
+                        value = $(item).val();
                     _setVal($(item), value);
                 });
             }
