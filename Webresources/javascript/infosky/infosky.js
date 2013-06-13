@@ -791,7 +791,8 @@
     };
 
     var _init = function(obj, option) {
-        $(obj).on("keydown.tag", function(e) {
+        $(obj).data("tag.option", option)
+            .on("keydown.tag", function(e) {
             switch (e.keyCode) {
                 case 8:
                     //退格
@@ -807,11 +808,11 @@
                 case 13:
                 case 32:
                     //回车，空格
-                    _add(obj, option);
+                    _add(obj, null, option);
                     e.preventDefault();
                     break;
                 case 59:
-                    _add(obj, option);
+                    _add(obj, null, option);
                     e.preventDefault();
                     break;
                 default:
@@ -853,7 +854,7 @@
             if ($(obj).next().is(".tag-span")) {
                 _setToEdit($(obj).next(), option);
             } else {
-                _add(obj, option);
+                _add(obj, null, option);
             }
         }
     };
@@ -863,22 +864,21 @@
             _setToEdit($(obj).next(), option);
             e.preventDefault();
         } else {
-            if ($(obj).val()) {
+            if ($(obj).val())
                 e.preventDefault();
-            }
-            _add(obj, option);
+            _add(obj, null, option);
         }
     };
 
     var _add = function(obj, text, option) {
+        option = option || $(obj).data("tag.option");
         text = text || $.trim($(obj).val());
         if (!option.repeatable) {
             var objs = _getTag(obj, text);
             if (objs.length) {
                 _$.ui.blink(objs);
-                if (option.repeatclear) {
+                if (option.repeatclear)
                     $(obj).val("");
-                }
                 return;
             }
         }
@@ -928,11 +928,11 @@
 
     var _setToEdit = function(span, option) {
         var input = $(span).siblings("input");
-        _add(input, option);
+        _add(input, null, option);
         input.detach();
         var text = $(span).data("tag.val");
         $(span).replaceWith(input.val(text));
-        _setWidth(input);
+        _setWidth(input, option);
         _$.caret(input.get(0), text ? text.length : 0);
         input.focus();
     };
@@ -1509,8 +1509,9 @@
         $(document).on("click.select", function(e) {
             if (option.popDiv) {
                 if ($.contains(option.popDiv.get(0), e.target)) {
-                    if ($(e.target).not(".editTxt"))
-                        return;
+                    if ($(e.target).not(".editTxt")) {
+                        return false;
+                    }
                 } else {
                     option.popDiv.hide();
                     $(option.menu).hide();
@@ -1713,6 +1714,12 @@
                     _toDown(option);
                     option.input.focus();
                     break;
+                    //tab
+                case 9:
+                    option.input.focus();
+                    option.popDiv.hide();
+                    $(option.menu).hide();
+                    break;
             }
         });
     };
@@ -1774,9 +1781,9 @@
                 ulArea.append(li);
             });
             option.popDiv.on("click.select", function(e) {
-                if ($.contains($(".editLi").get(0), e.target)) {
+                if ($.contains(option.popDiv.find(".editLi").get(0), e.target)) {
                     $(".editTxt").focus();
-                    return;
+                    return false;
                 } else {
                     $(option.input).focus();
                 }
@@ -1792,6 +1799,8 @@
         var position = $(option.input).offset();
         var top = position.top + $(option.input).height() + 5;
         var left = position.left;
+
+        $(".tptDiv.selectDiv,.autoSort.tptDiv.selectSort").not(option.popDiv).not(option.menu).hide();
 
         option.popDiv.css({
             "top": top + "px",
