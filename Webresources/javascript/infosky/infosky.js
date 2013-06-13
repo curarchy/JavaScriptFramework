@@ -1634,6 +1634,10 @@
                 var checkbox = liItem.find("input");
                 checkbox.prop("checked", !checkbox.prop("checked"));
             }
+            // else{
+            //     $(e.target).closest("li").trigger("click.select");
+            //     return;
+            // }
             var result = [];
             option.popDiv.find(".selectItem").removeClass("liSelected");
             option.popDiv.find("input:checked").each(function(index, item) {
@@ -1715,7 +1719,9 @@
                     option.input.focus();
                     return false;
                     //tab
+                    //esc
                 case 9:
+                case 27:
                     option.input.focus();
                     option.popDiv.hide();
                     $(option.menu).hide();
