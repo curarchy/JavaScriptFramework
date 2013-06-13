@@ -1531,11 +1531,11 @@
                 case 38:
                     //↑
                     _toUp(option);
-                    break;
+                    return false;
                 case 40:
                     //↓
                     _toDown(option);
-                    break;
+                    return false;
                 case 13:
                     _enter(option);
                     break;
@@ -1708,12 +1708,12 @@
                     //↑
                     _toUp(option);
                     option.input.focus();
-                    break;
+                    return false;
                 case 40:
                     //↓
                     _toDown(option);
                     option.input.focus();
-                    break;
+                    return false;
                     //tab
                 case 9:
                     option.input.focus();
