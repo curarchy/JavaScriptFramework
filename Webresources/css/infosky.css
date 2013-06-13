@@ -18,7 +18,7 @@ ul{list-style: none inside none; margin: 0; padding: 0;}
 .tptDiv ul li span{display: inline-block;+display:inline;_zoom:1;}
 .tptDiv li { padding: 0.3em  0.5em; border:1px solid #fff;}
 .tptDiv ul li:hover{ background-color: #D0E5F5;cursor: pointer;border:1px solid #7BBBEE;transition: background-color 0.2s ease 0s;}
-.tptDiv ul .keyFocus{border-top:1px solid #ff0000;border-bottom:1px solid #ff0000; }
+body .tptDiv ul .keyFocus{border-top:1px solid #ff0000;border-bottom:1px solid #ff0000; }
 .tptDiv .liSelected{ background-color: #FFDC8C;cursor: pointer;border:1px solid #D19405;transition: background-color 0.2s ease 0s;}
 .spanRight { float: right;margin-left:25px;text-align: right;}
 .tptDiv .spli{background: #e0ffe0;border: 1px solid #68FF66;margin-top: 2px;}
@@ -58,7 +58,7 @@ body .tptDiv ul .spliHold{background: #e0ffe0;border: 1px solid #68FF66;cursor: 
 .selectDiv ul .editLi:hover{background: #fff;cursor: default;}
 .selectDiv ul .editLi.selectItem.keyFocus{border:1px solid #FFFFFF;color: #000;}
 .selectDiv ul .editLi.selectItem.keyFocus input{border-color: red;}
-.selectSort .sortContent ul{width:65px;+width:78px;display: none;padding: 0.5em;right: -1px;text-align: right;background: #fff;border:1px solid #aaa;}
+.selectSort .sortContent ul{width:65px;_margin-top:1em;+width:78px;display: none;padding: 0.5em;right: -1px;text-align: right;background: #fff;border:1px solid #aaa;}
 /*tree*/
 .nodeIcon {display: inline-block;_display:inline;_zoom:1;height:18px;width: 18px;vertical-align: middle; background: url(../img/d.gif) no-repeat -90px 0;cursor: default;}
 .last.folderOpen{background-position: -54px 0;cursor: pointer;}
