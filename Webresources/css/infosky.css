@@ -15,7 +15,7 @@ ul{list-style: none inside none; margin: 0; padding: 0;}
 .tptDiv { border: 1px solid #aaa;background-color: #fff;}
 .tptDiv ul{ padding: 0.5em; }
 .tptDiv li{margin-top:2px;margin-bottom: 2px;}
-.tptDiv ul li span{display: inline-block;}
+.tptDiv ul li span{display: inline-block;+display:inline;_zoom:1;}
 .tptDiv li { padding: 0.3em  0.5em; border:1px solid #fff;}
 .tptDiv ul li:hover{ background-color: #D0E5F5;cursor: pointer;border:1px solid #7BBBEE;transition: background-color 0.2s ease 0s;}
 .tptDiv ul .keyFocus{border-top:1px solid #ff0000;border-bottom:1px solid #ff0000; }
@@ -27,7 +27,7 @@ body .tptDiv ul .spliHold{background: #e0ffe0;border: 1px solid #68FF66;cursor: 
 .tptDiv .selectItem{padding-left: 1.5em;}
 
 /*auto*/
-.autoDiv { min-width: 300px;_width:300px;}
+.autoDiv { min-width: 300px;+width:350px;}
 .autoDiv .autoDirect,.autoDiv .cursort{background: #e0ffe0;border: 1px solid #68FF66;}
 
 .autoDiv .autoData li b{color:red;}
@@ -42,19 +42,19 @@ body .tptDiv ul .spliHold{background: #e0ffe0;border: 1px solid #68FF66;cursor: 
  .autoSort .sortContent:hover ul{display: block;}
 .autoDiv li{padding: 5px;border: 1px solid #fff;}
 .autoDiv .autoPagination ul{margin: 0px auto; width: auto; text-align: center;}
-.autoDiv .autoPagination ul li{display: inline-block;_display:inline;_zoom:1;border: 1px solid #C9D8D9;margin: 5px 2px;padding: 1px 5px;cursor: pointer;}
+.autoDiv .autoPagination ul li{display: inline-block;+display:inline;_zoom:1;border: 1px solid #C9D8D9;margin: 5px 2px;padding: 1px 5px;cursor: pointer;}
 .autoDiv .autoPagination ul .autoPagDis{cursor:default;}
 .autoDiv .autoPagination ul .num{border-color:#fff;background-color: #fff;color:#3E6D8E;font-weight: bold;}
 .autoDiv .autoPagination ul li:hover{background-color: #D0E5F5;cursor: pointer;border:1px solid #7BBBEE;}
 .autoDiv .autoPagination ul .autoPagDis:hover{border-color: #C9D8D9;background-color: #fff;cursor:default;}
 .autoDiv .autoPagination ul .num:hover{background-color: #fff;border-color:#fff;}
 
-.selectDiv { min-width: 200px;_width:200px;height: 209px;overflow-y:scroll;}
+.selectDiv { min-width: 200px;+width:200px;height: 209px;overflow-y:scroll;}
 .selectDiv .keyFocus{color:red;}
 .selectDiv input{border:none;margin-top: -2px;}
 .selectDiv ul .editLi .editTxt{border: 1px solid #ccc;width: 90px; vertical-align: text-top;}
 .selectDiv ul .editLi .editAdd{cursor: pointer;vertical-align: text-bottom;}
-.selectDiv ul .editLi span{float: right;}
+.selectDiv ul .editLi span{float: right;+float: none;}
 .selectDiv ul .editLi:hover{background: #fff;cursor: default;}
 .selectDiv ul .editLi.selectItem.keyFocus{border:1px solid #FFFFFF;color: #000;}
 .selectDiv ul .editLi.selectItem.keyFocus input{border-color: red;}

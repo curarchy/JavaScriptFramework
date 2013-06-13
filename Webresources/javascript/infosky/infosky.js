@@ -1829,6 +1829,8 @@
         lis.filter(".liSelected").removeClass("liSelected").find("input").prop("checked", false);
         if (option.muti) {
             $.each(varArray, function(index, item) {
+                if (!item||_$.trim(item) === "")
+                    return;
                 var flag = false;
                 lis.each(function(index, liItem) {
                     var li = $(liItem);
