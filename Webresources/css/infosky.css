@@ -61,7 +61,7 @@ body .tptDiv ul .spliHold{background: #F37C06;border: 1px solid #D74700;cursor: 
 .selectSort .sortContent ul{width:65px;_margin-top:1em;+width:78px;display: none;padding: 0.5em;right: -1px;text-align: right;background: #fff;border:1px solid #aaa;}
 /*tree*/
 .nodeIcon {display: inline-block;_display:inline;_zoom:1;height:18px;width: 18px;vertical-align: middle; background: url(../img/d.gif) no-repeat -90px 0;cursor: default;}
-.last.folderOpen{background-position: -54px 0;cursor: pointer;}
+
 .folderOpen{background-position: -36px -72px;cursor: pointer;}
 .folderClose{background-position: -72px 0;cursor: pointer;}
 .line{background-position: -90px 0;}
@@ -83,6 +83,7 @@ body .tptDiv ul .spliHold{background: #F37C06;border: 1px solid #D74700;cursor: 
 
 .nodeTitle{cursor: pointer;}
 .first.folderOpen{background-position: -18px -72px;cursor: pointer;}
+.last.folderOpen{background-position: -54px 0;cursor: pointer;}
 .rootTree .keyFocus{background-color: #FFDC8C;cursor: pointer;transition: background-color 0.2s ease 0s; }
 
 .subTree{padding-left: 18px;background: url(../img/d.gif) repeat-y -90px 0;}
