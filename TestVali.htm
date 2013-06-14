@@ -1,0 +1,82 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>测试验证</title>
+    <script type="text/javascript" src="Webresources/javascript/framework/jquery-1.9.1.js"></script>
+    <script type="text/javascript" src="Webresources/javascript/infosky/infosky.js"></script>
+    <script type="text/javascript" src="Webresources/javascript/framework/jquery.color.js"></script>
+    <style>
+        p { margin: 5px; font-size: 12px; padding: 10px; }
+        p a { padding: 2px; border: 1px solid #ccc; cursor: pointer; text-align: center; margin: 0 10px; }
+        hr { margin: 10px 0px; border-color: #ddd; }
+        textarea, input { background: #fff; border: 1px solid #aaa; }
+        textarea { width: 600px; height: 100px; margin: 25px; }
+        #group1, #group2, #group3 { border: 1px solid #ccc; margin: 25px; width: 300px; float: left; }
+    </style>
+    <script type="text/javascript">
+        $(function () {
+            $("#commandArea .copy").bind("click", function () {
+                var txt = $(this).prev().attr("onclick");
+                $("#consoleArea").val(txt);
+            });
+        });    
+    </script>
+</head>
+<body>
+    <div id="commandArea">
+        <p>
+            _$.vali.init() <a onclick='console.info(_$.vali.init())'>初始化验证</a><a class="copy">copy</a>
+        </p>
+        <p>
+            _$.vali.destory() <a onclick='console.info(_$.vali.destory())'>反初始化验证</a><a class="copy">copy</a>
+        </p>
+        <p>
+            _$.vali.getLastErrors() <a onclick='console.dir(_$.vali.getLastErrors())'>获取错误集合</a><a
+                class="copy">copy</a>
+        </p>
+        <p>
+            _$.vali.validate() <a onclick='console.info(_$.vali.validate())'>验证</a><a class="copy">copy</a>
+        </p>
+    </div>
+    <textarea id="consoleArea"></textarea>
+    <p>
+        <a onclick='eval($("#consoleArea").val())'>执行</a></p>
+    <div id="group1">
+        <p>
+            <input type="text" validation='{"tag":"自定义标签","rules":[["Required"]]}'></p>
+        <p>
+            <input type="text" validation='{"tag":"自定义标签2","rules":[["Required"]]}'></p>
+        <p>
+            <input type="text" validation='{"rules":[["Required"]]}'></p>
+        <p>
+            <input type="text" validation='{"msg":{"Required":"自定义错误信息"},"rules":[["Required"]]}'></p>
+        <p>
+            <input type="text" validation='{"rules":[["Required"]]}'></p>
+    </div>
+    <div id="group2">
+        <p>
+            <input type="text" validation='{"group":"group2","rules":[["Required"]]}'></p>
+        <p>
+            <input type="text" validation='{"group":"group2","rules":[["Required"]]}'></p>
+        <p>
+            <input type="text" validation='{"group":"group2","rules":[["Required"]]}'></p>
+        <p>
+            <input type="text" validation='{"group":"group2","rules":[["Required"]]}'></p>
+        <p>
+            <input type="text" validation='{"group":"group2","rules":[["Required"]]}'></p>
+    </div>
+    <div id="group3">
+        <p>
+            <input type="text" validation='{"group":"group3","rules":[["Required"]]}'></p>
+        <p>
+            <input type="text" validation='{"group":"group3","rules":[["Required"]]}'></p>
+        <p>
+            <input type="text" validation='{"group":"group3","rules":[["Required"]]}'></p>
+        <p>
+            <input type="text" validation='{"group":"group3","rules":[["Required"]]}'></p>
+        <p>
+            <input type="text" validation='{"group":"group3","rules":[["Required"]]}'></p>
+    </div>
+    <br />
+</body>
+</html>
