@@ -1747,8 +1747,8 @@
                     menuItem.on("click.select", function() {
                         area.find(".selectItem").not(".editLi").addClass("liSelected");
                         var result = [];
-                        option.popDiv.find("input:checked").each(function(index, item) {
-                            data = $(item).closest("li").addClass("liSelected").data("selectData");
+                        option.popDiv.find(".liSelected").each(function(index, item) {
+                            data = $(item).data("selectData");
                             result.push(data.value);
                             $(option.input).val(result.join(option.optChar));
                         });
@@ -1791,8 +1791,8 @@
             }
             $("body").append(option.popDiv);
         }
-        var position = $(option.input).offset();
-        var top = position.top + $(option.input).height() + 5;
+        var position = option.position ? $(option.position).offset() : $(option.input).offset();
+        var top = position.top + (option.position ? $(option.position).height() : $(option.input).height()) + 5;
         var left = position.left;
 
         $(".tptDiv.selectDiv,.autoSort.tptDiv.selectSort").not(option.popDiv).not(option.menu).hide();
