@@ -19,10 +19,10 @@ ul{list-style: none inside none; margin: 0; padding: 0;}
 .tptDiv li { padding: 0.3em  0.5em; border:1px solid #fff;}
 .tptDiv ul li:hover{ background-color: #D0E5F5;cursor: pointer;border:1px solid #7BBBEE;transition: background-color 0.2s ease 0s;}
 body .tptDiv ul .keyFocus{border-top:1px solid #ff0000;border-bottom:1px solid #ff0000; }
-.tptDiv .liSelected{ background-color: #FFDC8C;cursor: pointer;border:1px solid #D19405;transition: background-color 0.2s ease 0s;}
+.tptDiv .liSelected{ background:url(../img/checked.gif) #E0FFE0 right bottom no-repeat;cursor: pointer;border:1px solid #68FF66;transition: background-color 0.2s ease 0s;}
 .spanRight { float: right;margin-left:25px;text-align: right;}
 .tptDiv .spli{background: #e0ffe0;border: 1px solid #68FF66;margin-top: 2px;}
-body .tptDiv ul .spliHold{background: #e0ffe0;border: 1px solid #68FF66;cursor: default;}
+body .tptDiv ul .spliHold{background: #F37C06;border: 1px solid #D74700;cursor: default;color:#fff;}
 .tptDiv ul li input{vertical-align: middle;}
 .tptDiv .selectItem{padding-left: 1.5em;}
 

@@ -1466,7 +1466,6 @@
     };
 
     var _liItem = "<li class='{1}'><span class='spanRight'>{2}{3}</span><span>{0}</span></li>",
-        _mutiCheckbox = "<input type='checkbox'></input>",
         _menuArea = "<div class='autoSort'><a class='sortContent'><span>操作</span><ul></ul></a></div>",
         _menuItem = "<li class='{1}'>{0}</li>",
         _editArea = "<li class='editLi selectItem'><input type='text' class='editTxt'/><span><a class='editAdd'>添加</a></span></li>",
@@ -1630,18 +1629,10 @@
         var data = null;
         if (option.muti) {
             $(option.input).val("");
-            if (!$(e.target).is("input")) {
-                var checkbox = liItem.find("input");
-                checkbox.prop("checked", !checkbox.prop("checked"));
-            }
-            // else{
-            //     $(e.target).closest("li").trigger("click.select");
-            //     return;
-            // }
+            liItem.toggleClass("liSelected");
             var result = [];
-            option.popDiv.find(".selectItem").removeClass("liSelected");
-            option.popDiv.find("input:checked").each(function(index, item) {
-                data = $(item).closest("li").addClass("liSelected").data("selectData");
+            option.popDiv.find(".liSelected").each(function(index, item) {
+                data = $(item).data("selectData");
                 result.push(data.value);
                 $(option.input).val(result.join(option.optChar));
             });
@@ -1671,7 +1662,7 @@
             return;
         }
         input.val("");
-        var liItem = $(_$.stringFormat(_liItem, value, "selectItem", value, option.muti ? _mutiCheckbox : ""));
+        var liItem = $(_$.stringFormat(_liItem, value, "selectItem", value, ""));
         option.popDiv.find(">ul li:last").before(liItem);
         option.keyFocus++;
         liItem.on("click.select", function(e) {
@@ -1686,7 +1677,7 @@
     };
 
     var _addLiItemWithoutTrigger = function(option, value) {
-        var liItem = $(_$.stringFormat(_liItem, value, "selectItem", value, option.muti ? _mutiCheckbox : ""));
+        var liItem = $(_$.stringFormat(_liItem, value, "selectItem", value, ""));
         option.popDiv.find("li:last").before(liItem);
         liItem.on("click.select", function(e) {
             _bindLiItemEvent(option, liItem, e);
@@ -1747,7 +1738,6 @@
                     menuItem = $(_$.stringFormat(_menuItem, "全部取消", ""));
                     menuItem.on("click.select", function() {
                         area.find(".selectItem").removeClass("liSelected");
-                        area.find("input:checked").prop("checked", false);
                         $(option.input).val("");
                     });
                     option.menu.find("ul").append(menuItem);
@@ -1756,7 +1746,6 @@
                     menuItem = $(_$.stringFormat(_menuItem, "全部选中", ""));
                     menuItem.on("click.select", function() {
                         area.find(".selectItem").not(".editLi").addClass("liSelected");
-                        area.find("input:checkbox").prop("checked", true);
                         var result = [];
                         option.popDiv.find("input:checked").each(function(index, item) {
                             data = $(item).closest("li").addClass("liSelected").data("selectData");
@@ -1781,7 +1770,7 @@
                 if (item.nodeType === "group") {
                     li = _$.stringFormat(_liItem, item.value, "selectGroup spliHold", "", "");
                 } else if (item.nodeType === "option") {
-                    li = $(_$.stringFormat(_liItem, item.key, "selectItem", item.value, option.muti ? _mutiCheckbox : ""));
+                    li = $(_$.stringFormat(_liItem, item.key, "selectItem", item.value, ""));
                     li.data("selectData", item);
                 }
                 ulArea.append(li);
@@ -1832,10 +1821,9 @@
             $(option.menu).hide();
         }
         var lis = option.popDiv.find(".selectItem").not(".editLi");
-        lis.filter(".liSelected").removeClass("liSelected").find("input").prop("checked", false);
         if (option.muti) {
             $.each(varArray, function(index, item) {
-                if (!item||_$.trim(item) === "")
+                if (!item || _$.trim(item) === "")
                     return;
                 var flag = false;
                 lis.each(function(index, liItem) {
