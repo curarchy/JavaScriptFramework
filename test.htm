@@ -1,0 +1,37 @@
+﻿<HTML> 
+<HEAD>
+<SCRIPT type="text/javascript">
+    function blendTest1(img, which) {
+        if (which = "1") {
+            Test1.filters.blendTrans.Apply();
+            Test1.src = img;
+            Test1.filters.blendTrans.Play();
+        }
+        else if (which = "2") {
+            Test2.filters.blendTrans.Apply();
+            Test2.src = img;
+            Test2.filters.blendTrans.Play();
+        }
+
+    } 
+
+</script> 
+</HEAD> 
+<BODY> 
+
+<IMG ID="Test1" SRC="a.png" 
+STYLE="filter:blendTrans(duration=.5)" 
+onmouseout="blendTest1('a.png','1')" 
+onmouseover="blendTest1('b.png','1')" 
+onmousedown="blendTest1('c.png','1')"
+onmouseup="blendTest1('b.png','1')"> <br>
+
+<IMG ID="Test2" SRC="a.png" 
+STYLE="filter:blendTrans(duration=.5)" 
+onmouseout="blendTest2('a.png','2')" 
+onmouseover="blendTest2('b.png','2')" 
+onmousedown="blendTest2('c.png','2')"
+onmouseup="blendTest2('b.png','2')">
+
+</BODY> 
+</HTML>  
