@@ -2397,12 +2397,58 @@
         this.item = item;
     };
 
-    var _option = {};
+    var _option = {},
+        _tip = "<div class='tip'><p>{0}</p></div>";
+
+    var _init = function(item, option) {
+        var content = $(item).attr("title");
+        if (content) {
+            $(item).data("tip.title", content);
+            _bindEvent($(item), content, option);
+        }
+    };
+
+    var _bindEvent = function(item, content, option) {
+        item.hover(function() {
+            item.attr("title", "");
+            _show(item,content,option)
+        }, function() {
+            item.attr("title", content);
+            _hide(item);
+        });
+    };
+
+    var _show = function(item, content, option) {
+        var poptip = item.data("tip.poptip");
+        if (!poptip) {
+            poptip = $(_$.stringFormat(_tip, content));
+            $("body").append(poptip);
+            item.data("tip.poptip", poptip);
+        }
+
+        var position = item.offset();
+        var top = position.top + item.height() + 5;
+        var left = position.left;
+        poptip.css({
+            "top": top + "px",
+            "left": left + "px",
+            "position": "absolute",
+            "z-index": 200002
+        }).show();
+    };
+
+    var _hide = function(item) {
+        var poptip = item.data("tip.poptip");
+        poptip.hide();
+    };
 
     $.extend(_$.tip, {
-        init: function(area, target, option) {
+        init: function(area, option) {
             option = $.extend({}, _option, option);
-            _init(area, target, option);
+            var items = (area instanceof jQuery) ? area.find("[title]").andSelf("[title]") : $("*[title]");
+            items.each(function(index, item) {
+                _init(item, option);
+            });
         }
     });
 })();
