@@ -2411,7 +2411,7 @@
     var _bindEvent = function(item, content, option) {
         item.hover(function() {
             item.attr("title", "");
-            _show(item,content,option)
+            _show(item, content, option);
         }, function() {
             item.attr("title", content);
             _hide(item);
@@ -2452,3 +2452,4 @@
         }
     });
 })();
+

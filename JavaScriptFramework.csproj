@@ -68,8 +68,10 @@
     <Content Include="Webresources\javascript\framework\qunit-1.11.0.js" />
     <Content Include="Webresources\javascript\infoskytest\infoskytest.js" />
     <Content Include="Webresources\javascript\infosky\infosky-oldver.js" />
+    <Content Include="Webresources\javascript\infosky\infosky.ext.js" />
     <Content Include="Webresources\javascript\infosky\infosky.js" />
     <Content Include="Webresources\javascript\infosky\node.js" />
+    <Content Include="test.htm" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Webresources\img\d.psd" />

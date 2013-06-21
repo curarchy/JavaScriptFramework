@@ -3,6 +3,7 @@
 <head>
     <script type="text/javascript" src="Webresources/javascript/framework/jquery-1.9.1.js"></script>
     <script type="text/javascript" src="Webresources/javascript/infosky/infosky.js"></script>
+    <script type="text/javascript" src="Webresources/javascript/infosky/infosky.ext.js"></script>
     <script type="text/javascript" src="Webresources/javascript/framework/jquery.color.js"></script>
     <script type="text/javascript" src="Webresources/javascript/data/airport.js"></script>
     <link rel="stylesheet" type="text/css" href="Webresources/css/infosky.css" />
@@ -83,6 +84,10 @@
         <input id="pld2" type="password" placeholder="请输入xxx" style="margin: 10px;" />
         <textarea id="pld3" placeholder="请输入xxx" title="hello world" style="margin: 10px;"></textarea>
     </div>
+
+    <div class="filter-container" style="margin: 20px auto; width: 200px;">
+        <input id="selectTest" type="text" style="margin: 10px;" />
+    </div>
     <!--<textarea id="consoleArea"></textarea>
     <p>
         <a onclick='eval($("#consoleArea").val())'>控制台</a>
@@ -141,6 +146,7 @@
     $(document).ready(function() {
         _$.select.setValue($("#select1"));
         _$.tip.init($("body"));
+        _$.funnySelect.init($("#selectTest"),$("#forselect1"));
     });
 
 </script>
