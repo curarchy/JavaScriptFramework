@@ -54,7 +54,10 @@
     <Content Include="TestInput.htm" />
     <Content Include="TestTree.htm" />
     <Content Include="TestVali.htm" />
+    <Content Include="TicTacTon.htm" />
     <Content Include="Webresources\css\infosky.css" />
+    <Content Include="Webresources\img\circle.png" />
+    <Content Include="Webresources\img\cross.png" />
     <Content Include="Webresources\img\d.gif" />
     <Content Include="Webresources\img\d.png" />
     <Content Include="Webresources\javascript\data\airport.js" />
@@ -66,6 +69,7 @@
     <Content Include="Webresources\javascript\framework\jquery-ui-1.10.2.custom.js" />
     <Content Include="Webresources\javascript\framework\jquery.color.js" />
     <Content Include="Webresources\javascript\framework\qunit-1.11.0.js" />
+    <Content Include="Webresources\javascript\game\tictacton.js" />
     <Content Include="Webresources\javascript\infoskytest\infoskytest.js" />
     <Content Include="Webresources\javascript\infosky\infosky-oldver.js" />
     <Content Include="Webresources\javascript\infosky\infosky.ext.js" />
